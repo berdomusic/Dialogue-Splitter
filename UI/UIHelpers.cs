@@ -5,78 +5,58 @@ namespace VO_Tool.UI
     public static class UIHelpers
     {
         // ============ Validation ============
-        public static bool ValidateInputs(
-            string excelPath,
-            string reaperPath,
-            string outputFolder,
-            string textColumnName,
-            string audioColumnName,
-            string sourceTrackName,
-            string outputTrackName,
-            out string errorMessage)
+        public static bool ValidateInputs(UIControls ui, out string errorMessage)
         {
             errorMessage = string.Empty;
-    
-            if (string.IsNullOrEmpty(excelPath))
+
+            if (string.IsNullOrEmpty(ui.ExcelSelector.FilePath))
             {
                 errorMessage = "Please select an Excel file.";
                 return false;
             }
-    
-            if (string.IsNullOrEmpty(reaperPath))
+
+            if (string.IsNullOrEmpty(ui.ReaperSelector.FilePath))
             {
                 errorMessage = "Please select a Reaper project file.";
                 return false;
             }
-    
-            if (string.IsNullOrEmpty(outputFolder))
-            {
-                errorMessage = "Please select an output folder.";
-                return false;
-            }
-    
-            if (!File.Exists(excelPath))
+
+            if (!File.Exists(ui.ExcelSelector.FilePath))
             {
                 errorMessage = "Excel file does not exist.";
                 return false;
             }
-    
-            if (!File.Exists(reaperPath))
+
+            if (!File.Exists(ui.ReaperSelector.FilePath))
             {
                 errorMessage = "Reaper project file does not exist.";
                 return false;
             }
-    
-            if (!Directory.Exists(outputFolder))
-            {
-                errorMessage = "Output folder does not exist.";
-                return false;
-            }
-    
-            if (string.IsNullOrEmpty(textColumnName))
+
+            if (ui.Cmb_VO_Text_Column.SelectedItem == null)
             {
                 errorMessage = "Please select a VO text column.";
                 return false;
             }
-    
-            if (string.IsNullOrEmpty(audioColumnName))
+
+            if (ui.Cmb_VO_Audio_Column.SelectedItem == null)
             {
                 errorMessage = "Please select a VO audio file name column.";
                 return false;
             }
-    
-            if (string.IsNullOrEmpty(sourceTrackName))
+
+            if (ui.CmbSourceTrack.SelectedItem == null)
             {
                 errorMessage = "Please select a source track.";
                 return false;
             }
-    
-            if (string.IsNullOrEmpty(outputTrackName))
+
+            if (ui.CmbOutputTrack.SelectedItem == null)
             {
                 errorMessage = "Please select an output track.";
                 return false;
             }
-    
+
             return true;
         }
         

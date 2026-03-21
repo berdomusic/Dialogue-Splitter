@@ -10,188 +10,84 @@ namespace VO_Tool.UI
 {
     public class FormManager
     {
-        private readonly FileSelector excelSelector;
-        private readonly ComboBox cmbReaperProjects;
-        private readonly FolderSelector outputFolderSelector;
-        private readonly ComboBox cmbSourceTrack;
-        private readonly ComboBox cmbOutputTrack;
-        private readonly ComboBox cmb_VO_Text_Name;
-        private readonly ComboBox cmb_VO_Audio_Name;
-        private readonly Button btnProcess;
-        private readonly StatusManager statusManager;
+        private readonly UIControls ui = new UIControls();
         private readonly ExcelService excelService;
         private readonly ReaperService reaperService;
-        private List<ReaperProjectInfo> _openProjects = new();
-        private ReaperProjectInfo? _selectedProject;
+        private readonly FileSelectionHandler fileHandler;
         
         public FormManager(Main form)
         {
             excelService = new ExcelService();
             reaperService = new ReaperService();
+            
+            ui.MainForm = form;
 
             // Setup form
-            UIHelpers.SetFormSize(form, 600, 530);
+            UIHelpers.SetFormSize(form, 600, 480);
             UIHelpers.CenterForm(form);
             form.Text = "Reaper Audio Splitter";
             
-            var ui = new UIBuilder(form);
+            var builder = new UIBuilder(form);
             
             // Add Excel file selector
-            (var lbl_ExcelFile, excelSelector) = ui.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
+            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
             
-            // Add Reaper projects dropdown instead of file selector
-            var lbl_ReaperProject = UIHelpers.CreateLabel("Reaper Project:", 20, ui.GetCurrentY());
-            cmbReaperProjects = UIHelpers.CreateComboBox(160, ui.GetCurrentY() - 3);
-            cmbReaperProjects.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbReaperProjects.SelectedIndexChanged += OnReaperProjectSelected!;
-            form.Controls.Add(lbl_ReaperProject);
-            form.Controls.Add(cmbReaperProjects);
-            ui.UpdateCurrentY(ui.GetCurrentY() + 50);
-            
-            // Add folder selector
-            (var lbl_OutputFolder, outputFolderSelector) = ui.AddFolderSelectorWithLabel("Output Folder:");
+            // Add Reaper file selector
+            (ui.Lbl_ReaperFile, ui.ReaperSelector) = builder.AddFileSelectorWithLabel("Reaper Project:", "Reaper Project Files|*.rpp|All Files|*.*");
             
             // Track Y position
-            int currentY = ui.GetCurrentY();
+            int currentY = builder.GetCurrentY();
             
             // Create VO Text Column dropdown
-            (var lbl_VO_Text_Name, cmb_VO_Text_Name) = UIHelpers.CreateLabeledComboBox("VO Text Column:", 20, currentY, enabled: false);
-            form.Controls.Add(lbl_VO_Text_Name);
-            form.Controls.Add(cmb_VO_Text_Name);
+            (ui.Lbl_VO_Text_Column, ui.Cmb_VO_Text_Column) = UIHelpers.CreateLabeledComboBox("VO Text Column (A=1):", 20, currentY, enabled: false);
+            form.Controls.Add(ui.Lbl_VO_Text_Column);
+            form.Controls.Add(ui.Cmb_VO_Text_Column);
             
             currentY += 35;
             
             // Create VO Audio File Name Column dropdown
-            (var lbl_VO_Audio_Name, cmb_VO_Audio_Name) = UIHelpers.CreateLabeledComboBox("VO Audio File Name Column:", 20, currentY, enabled: false);
-            form.Controls.Add(lbl_VO_Audio_Name);
-            form.Controls.Add(cmb_VO_Audio_Name);
+            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = UIHelpers.CreateLabeledComboBox("VO Audio File Name Column (A=1):", 20, currentY, enabled: false);
+            form.Controls.Add(ui.Lbl_VO_Audio_Column);
+            form.Controls.Add(ui.Cmb_VO_Audio_Column);
             
             currentY += 35;
             
             // Create Source Track dropdown
-            (var lblSourceTrack, cmbSourceTrack) = UIHelpers.CreateLabeledComboBox("Source Track:", 20, currentY, enabled: false);
-            form.Controls.Add(lblSourceTrack);
-            form.Controls.Add(cmbSourceTrack);
+            (ui.LblSourceTrack, ui.CmbSourceTrack) = UIHelpers.CreateLabeledComboBox("Source Track:", 20, currentY, enabled: false);
+            form.Controls.Add(ui.LblSourceTrack);
+            form.Controls.Add(ui.CmbSourceTrack);
             
             currentY += 35;
             
             // Create Output Track dropdown
-            (var lblOutputTrack, cmbOutputTrack) = UIHelpers.CreateLabeledComboBox("Output Track:", 20, currentY, enabled: false);
-            form.Controls.Add(lblOutputTrack);
-            form.Controls.Add(cmbOutputTrack);
+            (ui.LblOutputTrack, ui.CmbOutputTrack) = UIHelpers.CreateLabeledComboBox("Output Track:", 20, currentY, enabled: false);
+            form.Controls.Add(ui.LblOutputTrack);
+            form.Controls.Add(ui.CmbOutputTrack);
             
             currentY += 35;
             
             // Update UI builder's Y position
-            ui.UpdateCurrentY(currentY);
+            builder.UpdateCurrentY(currentY);
             
             // Add button and status bar
-            btnProcess = ui.AddButton("Process", OnProcessClick!);
-            statusManager = ui.AddStatusBar();
+            ui.BtnProcess = builder.AddButton("Process", OnProcessClick!);
+            ui.StatusManager = builder.AddStatusBar();
             
             // Setup all tooltips
             var tooltips = new TooltipManager();
-            tooltips.SetupAllTooltips(
-                form,
-                excelSelector,
-                cmbReaperProjects,
-                outputFolderSelector,
-                lbl_ExcelFile,
-                lbl_ReaperProject,
-                lbl_OutputFolder,
-                lbl_VO_Text_Name,
-                cmb_VO_Text_Name,
-                lbl_VO_Audio_Name,
-                cmb_VO_Audio_Name,
-                lblSourceTrack,
-                cmbSourceTrack,
-                lblOutputTrack,
-                cmbOutputTrack,
-                btnProcess,
-                statusManager
-            );
+            tooltips.SetupAllTooltips(ui);
             
-            // Load open Reaper projects
-            LoadOpenProjectsAsync();
-        }
-        
-        private async void LoadOpenProjectsAsync()
-        {
-            try
-            {
-                statusManager.UpdateStatus("Checking for open Reaper projects...");
-                _openProjects = await reaperService.GetOpenProjectsAsync();
-                
-                cmbReaperProjects.Items.Clear();
-                
-                if (_openProjects.Count == 0)
-                {
-                    cmbReaperProjects.Items.Add("No open Reaper projects found");
-                    cmbReaperProjects.Enabled = false;
-                    statusManager.UpdateStatus("No open Reaper projects detected. Open a project in Reaper first.");
-                }
-                else
-                {
-                    foreach (var project in _openProjects)
-                    {
-                        cmbReaperProjects.Items.Add(project.Name);
-                    }
-                    cmbReaperProjects.SelectedIndex = 0;
-                    statusManager.UpdateStatus($"Found {_openProjects.Count} open Reaper project(s)");
-                }
-            }
-            catch (Exception ex)
-            {
-                statusManager.UpdateStatus($"Error: {ex.Message}");
-                cmbReaperProjects.Items.Add("Error loading Reaper projects");
-                cmbReaperProjects.Enabled = false;
-                UIHelpers.ShowException($"Failed to load Reaper projects: {ex.Message}");
-            }
-        }
-        
-        private async void OnReaperProjectSelected(object? sender, EventArgs e)
-        {
-            if (cmbReaperProjects.SelectedIndex < 0 || cmbReaperProjects.SelectedIndex >= _openProjects.Count)
-                return;
+            // Create file handler
+            fileHandler = new FileSelectionHandler(ui.StatusManager, excelService, reaperService);
             
-            _selectedProject = _openProjects[cmbReaperProjects.SelectedIndex];
-            
-            statusManager.UpdateStatus($"Loading tracks from {_selectedProject.Name}...");
-            
-            // Populate source and output track dropdowns with tracks from this project
-            cmbSourceTrack.Items.Clear();
-            cmbOutputTrack.Items.Clear();
-            
-            // Use the tracks already from the project info
-            foreach (var track in _selectedProject.Tracks)
-            {
-                cmbSourceTrack.Items.Add(track);
-                cmbOutputTrack.Items.Add(track);
-            }
-            
-            cmbSourceTrack.Enabled = _selectedProject.Tracks.Count > 0;
-            cmbOutputTrack.Enabled = _selectedProject.Tracks.Count > 0;
-            
-            if (_selectedProject.Tracks.Count > 0)
-            {
-                cmbSourceTrack.SelectedIndex = 0;
-                cmbOutputTrack.SelectedIndex = 0;
-            }
-            
-            statusManager.UpdateStatus($"Loaded {_selectedProject.Tracks.Count} tracks from {_selectedProject.Name}");
+            // Subscribe to browse events
+            ui.ExcelSelector.OnFileSelected += file => _ = fileHandler.HandleExcelFileAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
+            ui.ReaperSelector.OnFileSelected += file => _ = fileHandler.HandleReaperFileAsync(file, ui.CmbSourceTrack, ui.CmbOutputTrack);
         }
         
         private async void OnProcessClick(object? sender, EventArgs e)
         {
-            if (!UIHelpers.ValidateInputs(
-                excelSelector.FilePath,
-                _selectedProject?.FullPath ?? string.Empty,
-                outputFolderSelector.FolderPath,
-                cmb_VO_Text_Name.SelectedItem?.ToString(),
-                cmb_VO_Audio_Name.SelectedItem?.ToString(),
-                cmbSourceTrack.SelectedItem?.ToString(),
-                cmbOutputTrack.SelectedItem?.ToString(),
-                out string errorMessage))
+            if (!UIHelpers.ValidateInputs(ui, out string errorMessage))
             {
                 UIHelpers.ShowError(errorMessage);
                 return;
@@ -199,54 +95,50 @@ namespace VO_Tool.UI
             
             try
             {
-                UIHelpers.DisableControls(btnProcess);
+                UIHelpers.DisableControls(ui.BtnProcess);
                 
                 List<string> texts = null!;
                 List<string> audioFiles = null!;
                 
+                // Convert column letters to numbers
+                int textColumnNum = await excelService.GetColumnNumberFromLetter(ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? "A");
+                int audioColumnNum = await excelService.GetColumnNumberFromLetter(ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? "A");
+                
                 texts = await UIHelpers.ExecuteWithStatusAsync(
-                    statusManager,
-                    () => excelService.ReadTextColumnAsync(
-                        excelSelector.FilePath, 
-                        cmb_VO_Text_Name.SelectedItem?.ToString() ?? string.Empty
-                    ),
+                    ui.StatusManager,
+                    () => excelService.ReadColumnByNumberAsync(ui.ExcelSelector.FilePath, textColumnNum),
                     "Reading VO text column...",
-                    $"Found entries in column '{cmb_VO_Text_Name.SelectedItem}'"
+                    $"Found entries in column {ui.Cmb_VO_Text_Column.SelectedItem}"
                 );
                 
                 audioFiles = await UIHelpers.ExecuteWithStatusAsync(
-                    statusManager,
-                    () => excelService.ReadTextColumnAsync(
-                        excelSelector.FilePath, 
-                        cmb_VO_Audio_Name.SelectedItem?.ToString() ?? string.Empty
-                    ),
+                    ui.StatusManager,
+                    () => excelService.ReadColumnByNumberAsync(ui.ExcelSelector.FilePath, audioColumnNum),
                     "Reading audio file names...",
-                    $"Found entries in column '{cmb_VO_Audio_Name.SelectedItem}'"
+                    $"Found entries in column {ui.Cmb_VO_Audio_Column.SelectedItem}"
                 );
                 
-                statusManager.UpdateStatus($"Project: {_selectedProject?.Name}");
-                statusManager.UpdateStatus($"Source track: {cmbSourceTrack.SelectedItem}");
-                statusManager.UpdateStatus($"Output track: {cmbOutputTrack.SelectedItem}");
-                statusManager.UpdateStatus($"Output folder: {outputFolderSelector.FolderPath}");
+                ui.StatusManager.UpdateStatus($"Project: {UIHelpers.GetFileName(ui.ReaperSelector.FilePath)}");
+                ui.StatusManager.UpdateStatus($"Source track: {ui.CmbSourceTrack.SelectedItem}");
+                ui.StatusManager.UpdateStatus($"Output track: {ui.CmbOutputTrack.SelectedItem}");
                 
                 UIHelpers.ShowSuccess(
                     $"Successfully loaded:\n" +
-                    $"- {texts.Count} text entries from column '{cmb_VO_Text_Name.SelectedItem}'\n" +
-                    $"- {audioFiles.Count} audio file names from column '{cmb_VO_Audio_Name.SelectedItem}'\n" +
-                    $"- Project: {_selectedProject?.Name}\n" +
-                    $"- Source track: {cmbSourceTrack.SelectedItem}\n" +
-                    $"- Output track: {cmbOutputTrack.SelectedItem}\n" +
-                    $"- Output folder: {outputFolderSelector.FolderPath}"
+                    $"- {texts.Count} text entries from column {ui.Cmb_VO_Text_Column.SelectedItem}\n" +
+                    $"- {audioFiles.Count} audio file names from column {ui.Cmb_VO_Audio_Column.SelectedItem}\n" +
+                    $"- Project: {UIHelpers.GetFileName(ui.ReaperSelector.FilePath)}\n" +
+                    $"- Source track: {ui.CmbSourceTrack.SelectedItem}\n" +
+                    $"- Output track: {ui.CmbOutputTrack.SelectedItem}"
                 );
             }
             catch (Exception ex)
             {
-                statusManager.UpdateStatus($"Error: {ex.Message}");
+                ui.StatusManager.UpdateStatus($"Error: {ex.Message}");
                 UIHelpers.ShowException($"An error occurred: {ex.Message}");
             }
             finally
             {
-                UIHelpers.EnableControls(btnProcess);
+                UIHelpers.EnableControls(ui.BtnProcess);
             }
         }
     }

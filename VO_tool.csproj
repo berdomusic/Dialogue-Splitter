@@ -12,9 +12,4 @@
       <PackageReference Include="EPPlus" Version="8.5.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Remove="LuaScripts\GetOpenProjects.lua" />
-      <EmbeddedResource Include="LuaScripts\GetOpenProjects.lua" />
-    </ItemGroup>
-
 </Project>

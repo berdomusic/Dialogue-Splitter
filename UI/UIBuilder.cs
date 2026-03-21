@@ -25,31 +25,13 @@ namespace VO_Tool
             form.MaximizeBox = false;
         }
         
-        public FileSelector AddFileSelector(string labelText, string fileFilter, int x = 20)
-        {
-            var selector = new FileSelector(labelText, fileFilter, x, currentY);
-            selector.AddToForm(form);
-            currentY += 50;
-            UpdateMaxWidth(x + 550);
-            return selector;
-        }
-        
-        public FolderSelector AddFolderSelector(string labelText, int x = 20)
-        {
-            var selector = new FolderSelector(labelText, x, currentY);
-            selector.AddToForm(form);
-            currentY += 50;
-            UpdateMaxWidth(x + 550);
-            return selector;
-        }
-        
         public (Label label, FileSelector selector) AddFileSelectorWithLabel(string labelText, string fileFilter, int x = 20)
         {
             var label = new Label
             {
                 Text = labelText,
                 Location = new Point(x, currentY),
-                Size = new Size(100, 25)
+                Size = new Size(120, 25)
             };
             form.Controls.Add(label);
     

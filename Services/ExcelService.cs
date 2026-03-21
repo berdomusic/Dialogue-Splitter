@@ -6,102 +6,103 @@ namespace VO_Tool.Services
     {
         public ExcelService()
         {
-            // EPPlus 8+ license configuration
             ExcelPackage.License.SetNonCommercialPersonal("VO_Tool - Audio Splitter Tool");
         }
         
-        public async Task<List<string>> GetColumnHeadersAsync(string excelPath)
+        public Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)
         {
-            var headers = new List<string>();
+            var columnLetters = new List<string>();
             
             using (var package = new ExcelPackage(new FileInfo(excelPath)))
             {
                 var worksheet = package.Workbook.Worksheets[0];
-                int totalColumns = worksheet.Dimension?.Columns ?? 0;
                 
-                for (int col = 1; col <= totalColumns; col++)
+                // Get the dimension (used range)
+                var dimension = worksheet.Dimension;
+                
+                if (dimension == null)
                 {
-                    var header = worksheet.Cells[1, col].Value?.ToString();
-                    if (!string.IsNullOrWhiteSpace(header))
+                    return Task.FromResult(columnLetters);
+                }
+                
+                // Check each column in the used range
+                for (int col = dimension.Start.Column; col <= dimension.End.Column; col++)
+                {
+                    bool hasData = false;
+                    
+                    // Check each row in this column
+                    for (int row = dimension.Start.Row; row <= dimension.End.Row; row++)
                     {
-                        headers.Add(header.Trim());
+                        var cell = worksheet.Cells[row, col];
+                        if (cell.Value != null && !string.IsNullOrWhiteSpace(cell.Value.ToString()))
+                        {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    
+                    if (hasData)
+                    {
+                        columnLetters.Add(GetColumnLetter(col));
                     }
                 }
             }
             
-            return await Task.FromResult(headers);
+            return Task.FromResult(columnLetters);
         }
         
-        public async Task<List<string>> ReadTextColumnAsync(string excelPath, string columnName)
+        private string GetColumnLetter(int columnNumber)
+        {
+            string result = "";
+            while (columnNumber > 0)
+            {
+                columnNumber--;
+                result = (char)('A' + columnNumber % 26) + result;
+                columnNumber /= 26;
+            }
+            return result;
+        }
+        
+        public async Task<List<string>> ReadColumnByNumberAsync(string excelPath, int columnNumber)
         {
             var texts = new List<string>();
             
             using (var package = new ExcelPackage(new FileInfo(excelPath)))
             {
                 var worksheet = package.Workbook.Worksheets[0];
+                var dimension = worksheet.Dimension;
                 
-                // Find the column by name
-                int columnIndex = FindColumnIndex(worksheet, columnName);
-                
-                if (columnIndex == -1)
+                if (dimension == null)
                 {
-                    string availableColumns = GetAvailableColumns(worksheet);
-                    throw new Exception(
-                        $"Column '{columnName}' not found. Available columns: {availableColumns}"
-                    );
+                    throw new Exception("Excel file is empty.");
                 }
                 
-                // Read all rows
-                int totalRows = worksheet.Dimension?.Rows ?? 0;
-                for (int row = 2; row <= totalRows; row++)
+                for (int row = dimension.Start.Row; row <= dimension.End.Row; row++)
                 {
-                    var cellValue = worksheet.Cells[row, columnIndex].Value?.ToString();
-                    if (!string.IsNullOrWhiteSpace(cellValue))
+                    var cell = worksheet.Cells[row, columnNumber];
+                    if (cell.Value != null && !string.IsNullOrWhiteSpace(cell.Value.ToString()))
                     {
-                        texts.Add(cellValue.Trim());
+                        texts.Add(cell.Value.ToString().Trim());
                     }
                 }
             }
             
             if (texts.Count == 0)
             {
-                throw new Exception($"No text found in column '{columnName}'.");
+                throw new Exception($"No text found in column {GetColumnLetter(columnNumber)}.");
             }
             
-            return await Task.FromResult(texts);
+            return texts;
         }
         
-        private int FindColumnIndex(ExcelWorksheet worksheet, string columnName)
+        public async Task<int> GetColumnNumberFromLetter(string columnLetter)
         {
-            int totalColumns = worksheet.Dimension?.Columns ?? 0;
-            
-            for (int col = 1; col <= totalColumns; col++)
+            int result = 0;
+            foreach (char c in columnLetter.ToUpper())
             {
-                var header = worksheet.Cells[1, col].Value?.ToString();
-                if (string.Equals(header, columnName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return col;
-                }
+                result = result * 26 + (c - 'A' + 1);
             }
-            
-            return -1;
-        }
-        
-        private string GetAvailableColumns(ExcelWorksheet worksheet)
-        {
-            var columns = new List<string>();
-            int totalColumns = worksheet.Dimension?.Columns ?? 0;
-            
-            for (int col = 1; col <= totalColumns; col++)
-            {
-                var header = worksheet.Cells[1, col].Value?.ToString();
-                if (!string.IsNullOrEmpty(header))
-                {
-                    columns.Add(header);
-                }
-            }
-            
-            return columns.Count > 0 ? string.Join(", ", columns) : "No headers found";
+            return result;
         }
     }
 }

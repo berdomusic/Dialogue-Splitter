@@ -18,60 +18,39 @@ namespace VO_Tool.UI
             };
         }
         
-        public void SetupAllTooltips(
-            Form mainForm,
-            FileSelector excelSelector,
-            ComboBox cmbReaperProjects,
-            FolderSelector outputFolderSelector,
-            Label lbl_ExcelFile,
-            Label lbl_ReaperProject,
-            Label lbl_OutputFolder,
-            Label lbl_VO_Text_Name,
-            ComboBox cmb_VO_Text_Name,
-            Label lbl_VO_Audio_Name,
-            ComboBox cmb_VO_Audio_Name,
-            Label lblSourceTrack,
-            ComboBox cmbSourceTrack,
-            Label lblOutputTrack,
-            ComboBox cmbOutputTrack,
-            Button btnProcess,
-            StatusManager statusManager)
+        public void SetupAllTooltips(UIControls ui)
         {
-            // Excel file selector - label and controls
-            toolTip.SetToolTip(lbl_ExcelFile, "Select an Excel file containing VO text and audio file names");
-            toolTip.SetToolTip(excelSelector.GetTextBox(), "Select an Excel file containing VO text and audio file names");
-            toolTip.SetToolTip(excelSelector.GetBrowseButton(), "Browse for Excel file");
+            // Excel file selector
+            toolTip.SetToolTip(ui.Lbl_ExcelFile, "Select an Excel file containing VO text and audio file names");
+            toolTip.SetToolTip(ui.ExcelSelector.GetTextBox(), "Select an Excel file containing VO text and audio file names");
+            toolTip.SetToolTip(ui.ExcelSelector.GetBrowseButton(), "Browse for Excel file");
             
-            // Reaper project dropdown
-            toolTip.SetToolTip(lbl_ReaperProject, "Select an open Reaper project. Projects must be open in Reaper to appear here");
-            toolTip.SetToolTip(cmbReaperProjects, "Select an open Reaper project. Projects must be open in Reaper to appear here");
-            
-            // Output folder selector - label and controls
-            toolTip.SetToolTip(lbl_OutputFolder, "Choose where to save the split audio files");
-            toolTip.SetToolTip(outputFolderSelector.GetTextBox(), "Choose where to save the split audio files");
-            toolTip.SetToolTip(outputFolderSelector.GetBrowseButton(), "Browse for output folder");
+            // Reaper project selector
+            toolTip.SetToolTip(ui.Lbl_ReaperFile, "Select the Reaper project file (.rpp) that contains the source audio track");
+            toolTip.SetToolTip(ui.ReaperSelector.GetTextBox(), "Select the Reaper project file (.rpp) that contains the source audio track");
+            toolTip.SetToolTip(ui.ReaperSelector.GetBrowseButton(), "Browse for Reaper project file");
             
             // VO Text Column
-            toolTip.SetToolTip(lbl_VO_Text_Name, "Select the column containing the spoken text to match");
-            toolTip.SetToolTip(cmb_VO_Text_Name, "Select the column containing the spoken text to match");
+            toolTip.SetToolTip(ui.Lbl_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
+            toolTip.SetToolTip(ui.Cmb_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
             
             // VO Audio File Name Column
-            toolTip.SetToolTip(lbl_VO_Audio_Name, "Select the column containing the audio file names to export");
-            toolTip.SetToolTip(cmb_VO_Audio_Name, "Select the column containing the audio file names to export");
+            toolTip.SetToolTip(ui.Lbl_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the audio file names");
+            toolTip.SetToolTip(ui.Cmb_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the audio file names");
             
             // Source Track
-            toolTip.SetToolTip(lblSourceTrack, "Select the Reaper track that contains the source audio to split");
-            toolTip.SetToolTip(cmbSourceTrack, "Select the Reaper track that contains the source audio to split");
+            toolTip.SetToolTip(ui.LblSourceTrack, "Select the Reaper track that contains the source audio to split");
+            toolTip.SetToolTip(ui.CmbSourceTrack, "Select the Reaper track that contains the source audio to split");
     
             // Output Track
-            toolTip.SetToolTip(lblOutputTrack, "Select the Reaper track where split audio segments will be placed");
-            toolTip.SetToolTip(cmbOutputTrack, "Select the Reaper track where split audio segments will be placed");
+            toolTip.SetToolTip(ui.LblOutputTrack, "Select the Reaper track where split audio segments will be placed");
+            toolTip.SetToolTip(ui.CmbOutputTrack, "Select the Reaper track where split audio segments will be placed");
             
             // Process button
-            toolTip.SetToolTip(btnProcess, "Start processing: match text to audio and split files");
+            toolTip.SetToolTip(ui.BtnProcess, "Start processing: match text to audio and split files");
             
             // Status bar
-            toolTip.SetToolTip(statusManager.GetStatusLabel(), "Current operation status");
+            toolTip.SetToolTip(ui.StatusManager.GetStatusLabel(), "Current operation status");
         }
     }
 }

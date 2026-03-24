@@ -1,5 +1,4 @@
-﻿
-namespace VO_Tool.Status
+﻿namespace VO_Tool.Status
 {
     public class StatusManager
     {

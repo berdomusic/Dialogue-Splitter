@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using VO_Tool.Selectors;
+﻿using VO_Tool.Selectors;
 using VO_Tool.Status;
 
 namespace VO_Tool.UI

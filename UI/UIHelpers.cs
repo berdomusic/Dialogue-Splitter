@@ -125,8 +125,8 @@ namespace VO_Tool.UI
         
         public static bool IsAudioFile(string filePath)
         {
-            var extensions = new[] { ".wav", ".mp3", ".flac", ".m4a", ".ogg", ".aac" };
-            return extensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+            var helper = new FileSelectionHelper();
+            return helper.IsAudioFile(filePath);
         }
         
         public static string GetFileName(string filePath)

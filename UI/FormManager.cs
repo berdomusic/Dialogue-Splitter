@@ -64,8 +64,23 @@ namespace VO_Tool.UI
             // Create file handler
             fileHandler = new FileSelectionHandler(ui.StatusManager, excelService);
 
-            // Subscribe to browse events
+            // Subscribe to browse events - SetFilePath triggers OnFileSelected, which calls handler
             ui.ExcelSelector.OnFileSelected += file => _ = fileHandler.HandleExcelFileAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
+            ui.AudioSelector.OnFileSelected += file => fileHandler.HandleAudioFileSelected(file);
+            
+            // Setup drag and drop for the main form
+            UIHelpers.SetupFileDrop(
+                form,
+                onExcelFile: file => 
+                {
+                    ui.ExcelSelector.SetFilePath(file);  // This triggers OnFileSelected which calls handler
+                },
+                onAudioFile: file =>
+                {
+                    ui.AudioSelector.SetFilePath(file);
+                    fileHandler.HandleAudioFileSelected(file);
+                }
+            );
         }
         
         private async void OnProcessClick(object? sender, EventArgs e)

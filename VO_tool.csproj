@@ -11,5 +11,8 @@
     <ItemGroup>
       <PackageReference Include="EPPlus" Version="8.5.0" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="NAudio" Version="2.2.1" />
+    </ItemGroup>   
 
 </Project>

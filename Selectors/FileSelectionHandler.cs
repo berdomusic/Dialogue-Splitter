@@ -7,11 +7,13 @@ namespace VO_Tool.UI
     {
         private readonly StatusManager statusManager;
         private readonly ExcelService excelService;
+        private readonly FileSelectionHelper fileSelectionHelper;
         
         public FileSelectionHandler(StatusManager statusManager, ExcelService excelService)
         {
             this.statusManager = statusManager;
             this.excelService = excelService;
+            this.fileSelectionHelper = new FileSelectionHelper();
         }
         
         public async Task HandleExcelFileAsync(string filePath, ComboBox textColumnCombo, ComboBox audioColumnCombo)
@@ -41,6 +43,23 @@ namespace VO_Tool.UI
             {
                 statusManager.UpdateStatus($"Error loading Excel: {ex.Message}");
                 UIHelpers.ShowException($"Error loading Excel: {ex.Message}");
+            }
+        }
+        
+        public void HandleAudioFileSelected(string filePath)
+        {
+            if (!File.Exists(filePath)) return;
+            
+            var validation = fileSelectionHelper.ValidateAudioFile(filePath);
+            
+            if (validation.IsValid)
+            {
+                statusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(filePath)} - {validation.GetStatusMessage()}");
+            }
+            else
+            {
+                statusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
+                UIHelpers.ShowError(validation.ErrorMessage);
             }
         }
     }

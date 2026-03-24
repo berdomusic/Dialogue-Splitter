@@ -19,7 +19,7 @@ namespace VO_Tool
         
         private void SetupFormProperties()
         {
-            form.Text = "Reaper Audio Splitter";
+            form.Text = "VO Splitter";
             form.StartPosition = FormStartPosition.CenterScreen;
             form.FormBorderStyle = FormBorderStyle.FixedSingle;
             form.MaximizeBox = false;
@@ -41,48 +41,6 @@ namespace VO_Tool
             UpdateMaxWidth(x + 550);
     
             return (label, selector);
-        }
-
-        public (Label label, FolderSelector selector) AddFolderSelectorWithLabel(string labelText, int x = 20)
-        {
-            var label = new Label
-            {
-                Text = labelText,
-                Location = new Point(x, currentY),
-                Size = new Size(100, 25)
-            };
-            form.Controls.Add(label);
-    
-            var selector = new FolderSelector(labelText, x, currentY);
-            selector.AddToForm(form);
-            currentY += 50;
-            UpdateMaxWidth(x + 550);
-    
-            return (label, selector);
-        }
-        
-        public TextBox AddTextBox(string labelText, string defaultValue = "", int x = 20)
-        {
-            var label = new Label
-            {
-                Text = labelText,
-                Location = new Point(x, currentY),
-                Size = new Size(130, 25)
-            };
-            
-            var textBox = new TextBox
-            {
-                Location = new Point(x + 140, currentY - 3),
-                Size = new Size(200, 23),
-                Text = defaultValue
-            };
-            
-            form.Controls.Add(label);
-            form.Controls.Add(textBox);
-            currentY += 35;
-            UpdateMaxWidth(x + 350);
-            
-            return textBox;
         }
         
         public Button AddButton(string text, EventHandler clickHandler, int x = 250, int width = 100, int height = 35)

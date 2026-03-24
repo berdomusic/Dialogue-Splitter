@@ -15,9 +15,9 @@ namespace VO_Tool.UI
                 return false;
             }
 
-            if (string.IsNullOrEmpty(ui.ReaperSelector.FilePath))
+            if (string.IsNullOrEmpty(ui.AudioSelector.FilePath))
             {
-                errorMessage = "Please select a Reaper project file.";
+                errorMessage = "Please select an audio file.";
                 return false;
             }
 
@@ -27,9 +27,9 @@ namespace VO_Tool.UI
                 return false;
             }
 
-            if (!File.Exists(ui.ReaperSelector.FilePath))
+            if (!File.Exists(ui.AudioSelector.FilePath))
             {
-                errorMessage = "Reaper project file does not exist.";
+                errorMessage = "Audio file does not exist.";
                 return false;
             }
 
@@ -42,18 +42,6 @@ namespace VO_Tool.UI
             if (ui.Cmb_VO_Audio_Column.SelectedItem == null)
             {
                 errorMessage = "Please select a VO audio file name column.";
-                return false;
-            }
-
-            if (ui.CmbSourceTrack.SelectedItem == null)
-            {
-                errorMessage = "Please select a source track.";
-                return false;
-            }
-
-            if (ui.CmbOutputTrack.SelectedItem == null)
-            {
-                errorMessage = "Please select an output track.";
                 return false;
             }
 
@@ -88,12 +76,12 @@ namespace VO_Tool.UI
         // ============ Drag and Drop ============
         public static void SetupFileDrop(Control control, 
             Action<string> onExcelFile, 
-            Action<string> onReaperFile,
+            Action<string> onAudioFile,
             Action<string>? onOtherFile = null)
         {
             control.AllowDrop = true;
             control.DragEnter += OnDragEnter!;
-            control.DragDrop += (s, e) => OnFileDrop(s, e, onExcelFile, onReaperFile, onOtherFile);
+            control.DragDrop += (s, e) => OnFileDrop(s, e, onExcelFile, onAudioFile, onOtherFile);
         }
         
         private static void OnDragEnter(object? sender, DragEventArgs e)
@@ -106,7 +94,7 @@ namespace VO_Tool.UI
         
         private static void OnFileDrop(object? sender, DragEventArgs e, 
             Action<string> onExcelFile, 
-            Action<string> onReaperFile,
+            Action<string> onAudioFile,
             Action<string>? onOtherFile)
         {
             if (e.Data?.GetData(DataFormats.FileDrop) is not string[] files) return;
@@ -117,9 +105,9 @@ namespace VO_Tool.UI
                 {
                     onExcelFile(file);
                 }
-                else if (IsReaperFile(file))
+                else if (IsAudioFile(file))
                 {
-                    onReaperFile(file);
+                    onAudioFile(file);
                 }
                 else
                 {
@@ -135,9 +123,10 @@ namespace VO_Tool.UI
                    filePath.EndsWith(".xls", StringComparison.OrdinalIgnoreCase);
         }
         
-        public static bool IsReaperFile(string filePath)
+        public static bool IsAudioFile(string filePath)
         {
-            return filePath.EndsWith(".rpp", StringComparison.OrdinalIgnoreCase);
+            var extensions = new[] { ".wav", ".mp3", ".flac", ".m4a", ".ogg", ".aac" };
+            return extensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
         
         public static string GetFileName(string filePath)

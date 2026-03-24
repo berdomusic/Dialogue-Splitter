@@ -24,31 +24,23 @@ namespace VO_Tool.UI
             toolTip.SetToolTip(ui.Lbl_ExcelFile, "Select an Excel file containing VO text and audio file names");
             toolTip.SetToolTip(ui.ExcelSelector.GetTextBox(), "Select an Excel file containing VO text and audio file names");
             toolTip.SetToolTip(ui.ExcelSelector.GetBrowseButton(), "Browse for Excel file");
-            
-            // Reaper project selector
-            toolTip.SetToolTip(ui.Lbl_ReaperFile, "Select the Reaper project file (.rpp) that contains the source audio track");
-            toolTip.SetToolTip(ui.ReaperSelector.GetTextBox(), "Select the Reaper project file (.rpp) that contains the source audio track");
-            toolTip.SetToolTip(ui.ReaperSelector.GetBrowseButton(), "Browse for Reaper project file");
-            
+    
+            // Audio file selector
+            toolTip.SetToolTip(ui.Lbl_AudioFile, "Select the source audio file (WAV, MP3, FLAC, M4A)");
+            toolTip.SetToolTip(ui.AudioSelector.GetTextBox(), "Select the source audio file (WAV, MP3, FLAC, M4A)");
+            toolTip.SetToolTip(ui.AudioSelector.GetBrowseButton(), "Browse for audio file");
+    
             // VO Text Column
             toolTip.SetToolTip(ui.Lbl_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
             toolTip.SetToolTip(ui.Cmb_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
-            
-            // VO Audio File Name Column
-            toolTip.SetToolTip(ui.Lbl_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the audio file names");
-            toolTip.SetToolTip(ui.Cmb_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the audio file names");
-            
-            // Source Track
-            toolTip.SetToolTip(ui.LblSourceTrack, "Select the Reaper track that contains the source audio to split");
-            toolTip.SetToolTip(ui.CmbSourceTrack, "Select the Reaper track that contains the source audio to split");
     
-            // Output Track
-            toolTip.SetToolTip(ui.LblOutputTrack, "Select the Reaper track where split audio segments will be placed");
-            toolTip.SetToolTip(ui.CmbOutputTrack, "Select the Reaper track where split audio segments will be placed");
-            
+            // VO Audio File Name Column
+            toolTip.SetToolTip(ui.Lbl_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
+            toolTip.SetToolTip(ui.Cmb_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
+    
             // Process button
-            toolTip.SetToolTip(ui.BtnProcess, "Start processing: match text to audio and split files");
-            
+            toolTip.SetToolTip(ui.BtnProcess, "Start processing: load Excel data");
+    
             // Status bar
             toolTip.SetToolTip(ui.StatusManager.GetStatusLabel(), "Current operation status");
         }

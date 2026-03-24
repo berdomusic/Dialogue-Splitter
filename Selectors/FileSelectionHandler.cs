@@ -32,10 +32,10 @@ namespace VO_Tool.UI
                     return;
                 }
                 
-                UIHelpers.PopulateComboBox(textColumnCombo, columnLetters);
-                UIHelpers.PopulateComboBox(audioColumnCombo, columnLetters);
+                UIBuilder.PopulateComboBox(textColumnCombo, columnLetters);
+                UIBuilder.PopulateComboBox(audioColumnCombo, columnLetters);
                 
-                UIHelpers.EnableControls(textColumnCombo, audioColumnCombo);
+                UIControls.EnableControls(textColumnCombo, audioColumnCombo);
                 
                 statusManager.UpdateStatus($"Found columns with data: {string.Join(", ", columnLetters)}");
             }

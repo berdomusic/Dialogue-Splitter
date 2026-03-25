@@ -178,7 +178,10 @@ namespace VO_Tool.UI
             settings.LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
             settings.LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
             settings.LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
-            settings.LastModel = ui.Cmb_Model.SelectedItem?.ToString() ?? "base";
+            if (ui.Cmb_Model.SelectedItem is WhisperModel model)
+            {
+                settings.LastModel = model;
+            }
             
             Settings.Settings.Save(settings);
         }

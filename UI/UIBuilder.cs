@@ -174,7 +174,7 @@ namespace VO_Tool
             return status;
         }
         
-        public (Label label, ComboBox comboBox) AddModelSelector(int x = 20, string? selectedModel = null)
+        public (Label label, ComboBox comboBox) AddModelSelector(int x = 20, WhisperModel? selectedModel = null)
         {
             var label = new Label
             {
@@ -182,38 +182,38 @@ namespace VO_Tool
                 Location = new Point(x, currentY),
                 Size = new Size(100, 25)
             };
-    
+
             var comboBox = new ComboBox
             {
                 Location = new Point(x + 110, currentY - 3),
                 Size = new Size(120, 23),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
-    
+
             // Populate with installed models
-            var installedModels = WhisperServiceHelper.GetInstalledModels();
+            var installedModels = WhisperModelExtensions.GetInstalledModels();
             foreach (var model in installedModels)
             {
                 comboBox.Items.Add(model);
             }
-    
+
             // Select first by default
             if (comboBox.Items.Count > 0)
             {
                 comboBox.SelectedIndex = 0;
             }
-    
+
             // Restore last selected model if provided
-            if (!string.IsNullOrEmpty(selectedModel) && comboBox.Items.Contains(selectedModel))
+            if (selectedModel.HasValue && comboBox.Items.Contains(selectedModel.Value))
             {
-                comboBox.SelectedItem = selectedModel;
+                comboBox.SelectedItem = selectedModel.Value;
             }
-    
+
             form.Controls.Add(label);
             form.Controls.Add(comboBox);
             currentY += 35;
             UpdateMaxWidth(x + 240);
-    
+
             return (label, comboBox);
         }
         

@@ -106,9 +106,12 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus($"Found {audioFileNames.Count} file names");
                 await Task.Delay(500);
                 
-                // Transcribe audio with selected model
+                // Get selected model
+                var selectedModel = Cmb_Model.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
+
+// Transcribe audio with selected model and prompt from Excel texts
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
-                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, Cmb_Model.SelectedItem?.ToString() ?? "base", (msg) =>
+                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, selectedModel, texts, (msg) =>
                 {
                     StatusManager.UpdateStatus(msg);
                 });

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using VO_Tool.Services;
 
 namespace VO_Tool.Settings
 {
@@ -10,7 +11,7 @@ namespace VO_Tool.Settings
         public string LastVO_Text_Column { get; set; } = string.Empty;
         public string LastVO_Audio_Column { get; set; } = string.Empty;
         public int LastSimilarityThreshold { get; set; } = 75;
-        public string LastModel { get; set; } = "base";
+        public WhisperModel LastModel { get; set; } = WhisperModel.Base;
     }
     
     public static class Settings

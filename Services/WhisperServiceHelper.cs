@@ -1,9 +1,76 @@
-﻿namespace VO_Tool.Services
+﻿using System.Diagnostics;
+
+namespace VO_Tool.Services
 {
+    public class WhisperSegment
+    {
+        public double Start { get; set; }
+        public double End { get; set; }
+        public string Text { get; set; } = string.Empty;
+    }
+    
     public static class WhisperServiceHelper
     {
-        public static string GetWhisperScript(string audioFilePath, string modelName)
+        public static string GetPythonCommand()
         {
+            string[] possibleCommands = { "py", "python", "python3" };
+            
+            foreach (var cmd in possibleCommands)
+            {
+                try
+                {
+                    var process = new Process();
+                    process.StartInfo.FileName = cmd;
+                    process.StartInfo.Arguments = "--version";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.CreateNoWindow = true;
+                    
+                    process.Start();
+                    process.WaitForExit(3000);
+                    
+                    if (process.ExitCode == 0)
+                    {
+                        return cmd;
+                    }
+                }
+                catch { }
+            }
+            
+            return string.Empty;
+        }
+        
+        public static bool IsWhisperInstalled(string pythonCmd)
+        {
+            try
+            {
+                var process = new Process();
+                process.StartInfo.FileName = pythonCmd;
+                process.StartInfo.Arguments = "-c \"import whisper; print('OK')\"";
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.CreateNoWindow = true;
+                
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit(3000);
+                
+                return process.ExitCode == 0 && output.Contains("OK");
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        
+        public static string GetWhisperScript(string audioFilePath, WhisperModel model, List<string> expectedTexts)
+        {
+            var modelName = model.ToModelString();
+            var prompt = string.Join(" ", expectedTexts);
+            var escapedPrompt = prompt.Replace("'", "\\'");
+            
             return @"
 import whisper
 import sys
@@ -11,7 +78,11 @@ import sys
 audio_file = r'" + audioFilePath + @"'
 
 model = whisper.load_model('" + modelName + @"')
-result = model.transcribe(audio_file, word_timestamps=True)
+result = model.transcribe(
+    audio_file, 
+    word_timestamps=True,
+    initial_prompt='" + escapedPrompt + @"'
+)
 
 for seg in result['segments']:
     start = seg['start']
@@ -19,41 +90,6 @@ for seg in result['segments']:
     text = seg['text'].strip()
     print(f'[{start:.2f}s - {end:.2f}s] {text}', flush=True)
 ";
-        }
-        
-        public static List<string> GetInstalledModels()
-        {
-            var installed = new List<string>();
-            var cachePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-                ".cache", "whisper"
-            );
-            
-            if (Directory.Exists(cachePath))
-            {
-                foreach (var file in Directory.GetFiles(cachePath, "*.pt"))
-                {
-                    var fileName = Path.GetFileNameWithoutExtension(file);
-                    if (fileName == "tiny" || fileName == "tiny.en") 
-                        installed.Add("tiny");
-                    else if (fileName == "base" || fileName == "base.en") 
-                        installed.Add("base");
-                    else if (fileName == "small" || fileName == "small.en") 
-                        installed.Add("small");
-                    else if (fileName == "medium" || fileName == "medium.en") 
-                        installed.Add("medium");
-                    else if (fileName == "large" || fileName == "large-v2" || fileName == "large-v3") 
-                        installed.Add("large");
-                }
-            }
-            
-            // Always include base as fallback (will be downloaded if needed)
-            if (installed.Count == 0)
-            {
-                installed.Add("base");
-            }
-            
-            return installed;
         }
     }
 }

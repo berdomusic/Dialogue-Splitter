@@ -1,16 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using System.Text.Json;
 
 namespace VO_Tool.Services
 {
-    public class WhisperSegment
-    {
-        public double Start { get; set; }
-        public double End { get; set; }
-        public string Text { get; set; } = string.Empty;
-    }
-    
     public static class WhisperService
     {
         public static double GetSimilarityThreshold(TrackBar trackBar)
@@ -18,11 +10,15 @@ namespace VO_Tool.Services
             return trackBar.Value / 100.0;
         }
         
-        public static async Task<List<WhisperSegment>> TranscribeAsync(string audioFilePath, string modelName, Action<string>? onProgress = null)
+        public static async Task<List<WhisperSegment>> TranscribeAsync(
+            string audioFilePath, 
+            WhisperModel model, 
+            List<string> expectedTexts,
+            Action<string>? onProgress = null)
         {
             var segments = new List<WhisperSegment>();
             
-            string pythonCmd = GetPythonCommand();
+            string pythonCmd = WhisperServiceHelper.GetPythonCommand();
             if (string.IsNullOrEmpty(pythonCmd))
             {
                 throw new Exception(
@@ -33,7 +29,7 @@ namespace VO_Tool.Services
                 );
             }
             
-            if (!IsWhisperInstalled(pythonCmd))
+            if (!WhisperServiceHelper.IsWhisperInstalled(pythonCmd))
             {
                 throw new Exception(
                     $"Whisper is not installed.\n\n" +
@@ -44,7 +40,7 @@ namespace VO_Tool.Services
             }
             
             var scriptPath = Path.GetTempFileName() + ".py";
-            var script = WhisperServiceHelper.GetWhisperScript(audioFilePath, modelName);
+            var script = WhisperServiceHelper.GetWhisperScript(audioFilePath, model, expectedTexts);
             
             await File.WriteAllTextAsync(scriptPath, script);
             
@@ -162,60 +158,6 @@ namespace VO_Tool.Services
             }
             
             return matrix[s1.Length, s2.Length];
-        }
-        
-        private static string GetPythonCommand()
-        {
-            string[] possibleCommands = { "py", "python", "python3" };
-            
-            foreach (var cmd in possibleCommands)
-            {
-                try
-                {
-                    var process = new Process();
-                    process.StartInfo.FileName = cmd;
-                    process.StartInfo.Arguments = "--version";
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.CreateNoWindow = true;
-                    
-                    process.Start();
-                    process.WaitForExit(3000);
-                    
-                    if (process.ExitCode == 0)
-                    {
-                        return cmd;
-                    }
-                }
-                catch { }
-            }
-            
-            return string.Empty;
-        }
-        
-        private static bool IsWhisperInstalled(string pythonCmd)
-        {
-            try
-            {
-                var process = new Process();
-                process.StartInfo.FileName = pythonCmd;
-                process.StartInfo.Arguments = "-c \"import whisper; print('OK')\"";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.CreateNoWindow = true;
-                
-                process.Start();
-                string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit(3000);
-                
-                return process.ExitCode == 0 && output.Contains("OK");
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }

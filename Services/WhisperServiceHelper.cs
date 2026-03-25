@@ -68,6 +68,23 @@ namespace VO_Tool.Services
         public static string GetWhisperScript(string audioFilePath, WhisperModel model, List<string> expectedTexts)
         {
             var modelName = model.ToModelString();
+    
+            return @"
+import whisper
+import sys
+
+audio_file = r'" + audioFilePath + @"'
+
+model = whisper.load_model('" + modelName + @"')
+result = model.transcribe(audio_file, word_timestamps=True)
+
+for seg in result['segments']:
+    start = seg['start']
+    end = seg['end']
+    text = seg['text'].strip()
+    print(f'[{start:.2f}s - {end:.2f}s] {text}', flush=True)
+";
+            /*var modelName = model.ToModelString();
             var prompt = string.Join(" ", expectedTexts);
             var escapedPrompt = prompt.Replace("'", "\\'");
             
@@ -89,7 +106,7 @@ for seg in result['segments']:
     end = seg['end']
     text = seg['text'].strip()
     print(f'[{start:.2f}s - {end:.2f}s] {text}', flush=True)
-";
+";*/
         }
     }
 }

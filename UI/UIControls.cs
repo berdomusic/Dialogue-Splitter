@@ -100,10 +100,10 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus($"Found {texts.Count} text entries");
 
                 // Show each text entry with a small delay
-                StatusManager.UpdateStatus("=== TEXT ENTRIES ===");
+                StatusManager.UpdateStatus("=== TEXT ENTRIES ===", false);
                 for (int i = 0; i < texts.Count; i++)
                 {
-                    StatusManager.UpdateStatus($"[{i + 1}] {texts[i]}");
+                    StatusManager.UpdateStatus($"[{i + 1}] {texts[i]}", false);
                     await Task.Delay(25);
                 }
 

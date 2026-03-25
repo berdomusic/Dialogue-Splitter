@@ -21,16 +21,20 @@ namespace VO_Tool.Status
             };
         }
         
-        public void UpdateStatus(string message)
+        public void UpdateStatus(string message, bool addToLog = true)
         {
             if (lblStatus.InvokeRequired)
             {
-                lblStatus.Invoke(new Action(() => UpdateStatus(message)));
+                lblStatus.Invoke(new Action(() => UpdateStatus(message, addToLog)));
                 return;
             }
             
             lblStatus.Text = message;
-            LogService.AddMessage(message);
+            
+            if (addToLog && _loggingEnabled)
+            {
+                LogService.AddMessage(message);
+            }
         }
         
         public void UpdatePosition(int y)

@@ -98,6 +98,15 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus($"Reading text from column {Cmb_VO_Text_Column.SelectedItem}...");
                 var texts = await ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, textColumnNum);
                 StatusManager.UpdateStatus($"Found {texts.Count} text entries");
+
+                // Show each text entry with a small delay
+                StatusManager.UpdateStatus("=== TEXT ENTRIES ===");
+                for (int i = 0; i < texts.Count; i++)
+                {
+                    StatusManager.UpdateStatus($"[{i + 1}] {texts[i]}");
+                    await Task.Delay(25);
+                }
+
                 await Task.Delay(500);
                 
                 // Read audio file names from Excel
@@ -109,7 +118,7 @@ namespace VO_Tool.UI
                 // Get selected model
                 var selectedModel = Cmb_Model.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
 
-// Transcribe audio with selected model and prompt from Excel texts
+                // Transcribe audio with selected model and prompt from Excel texts
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
                 var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, selectedModel, texts, (msg) =>
                 {

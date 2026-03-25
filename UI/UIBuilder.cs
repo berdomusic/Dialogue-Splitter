@@ -1,4 +1,5 @@
 ﻿using VO_Tool.Selectors;
+using VO_Tool.Services;
 using VO_Tool.Status;
 using VO_Tool.UI;
 
@@ -130,7 +131,7 @@ namespace VO_Tool
             var trackBar = new TrackBar
             {
                 Location = new Point(x + 140, currentY - 5),
-                Size = new Size(200, 45),
+                Size = new Size(200, 25),
                 Minimum = min,
                 Maximum = max,
                 Value = defaultValue,
@@ -171,6 +172,49 @@ namespace VO_Tool
             form.ClientSize = new Size(formWidth, formHeight);
             
             return status;
+        }
+        
+        public (Label label, ComboBox comboBox) AddModelSelector(int x = 20, string? selectedModel = null)
+        {
+            var label = new Label
+            {
+                Text = "Whisper Model:",
+                Location = new Point(x, currentY),
+                Size = new Size(100, 25)
+            };
+    
+            var comboBox = new ComboBox
+            {
+                Location = new Point(x + 110, currentY - 3),
+                Size = new Size(120, 23),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+    
+            // Populate with installed models
+            var installedModels = WhisperServiceHelper.GetInstalledModels();
+            foreach (var model in installedModels)
+            {
+                comboBox.Items.Add(model);
+            }
+    
+            // Select first by default
+            if (comboBox.Items.Count > 0)
+            {
+                comboBox.SelectedIndex = 0;
+            }
+    
+            // Restore last selected model if provided
+            if (!string.IsNullOrEmpty(selectedModel) && comboBox.Items.Contains(selectedModel))
+            {
+                comboBox.SelectedItem = selectedModel;
+            }
+    
+            form.Controls.Add(label);
+            form.Controls.Add(comboBox);
+            currentY += 35;
+            UpdateMaxWidth(x + 240);
+    
+            return (label, comboBox);
         }
         
         public CheckBox AddCheckBox(string text, int x = 20, bool defaultChecked = true)

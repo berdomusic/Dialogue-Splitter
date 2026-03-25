@@ -18,6 +18,8 @@ namespace VO_Tool.UI
         public Label Lbl_VO_Audio_Column { get; set; }
         public ComboBox Cmb_VO_Audio_Column { get; set; }
         public TrackBar Tb_SimilarityThreshold { get; set; }
+        public ComboBox Cmb_Model { get; set; }
+        public Label Lbl_Model { get; set; }
         public CheckBox ChkCreateLogFile { get; set; }
         public Button BtnProcess { get; set; }
         public StatusManager StatusManager { get; set; }
@@ -104,9 +106,9 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus($"Found {audioFileNames.Count} file names");
                 await Task.Delay(500);
                 
-                // Transcribe audio
+                // Transcribe audio with selected model
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
-                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, (msg) =>
+                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, Cmb_Model.SelectedItem?.ToString() ?? "base", (msg) =>
                 {
                     StatusManager.UpdateStatus(msg);
                 });

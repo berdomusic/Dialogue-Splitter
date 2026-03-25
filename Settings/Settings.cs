@@ -10,6 +10,7 @@ namespace VO_Tool.Settings
         public string LastVO_Text_Column { get; set; } = string.Empty;
         public string LastVO_Audio_Column { get; set; } = string.Empty;
         public int LastSimilarityThreshold { get; set; } = 75;
+        public string LastModel { get; set; } = "base";
     }
     
     public static class Settings

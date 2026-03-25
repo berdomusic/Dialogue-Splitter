@@ -20,7 +20,7 @@ namespace VO_Tool.UI
 
             var builder = new UIBuilder(form);
             
-            builder.SetFormSize(600, 600);
+            builder.SetFormSize(600, 700);
             builder.CenterForm();
             form.Text = "Audio Splitter - Speech to Text";
 
@@ -75,12 +75,18 @@ namespace VO_Tool.UI
             // Restore last similarity threshold
             ui.Tb_SimilarityThreshold.Value = settings.LastSimilarityThreshold;
             
+            // Update builder's Y position after slider and add extra space
+            yPos = builder.GetCurrentY();
             yPos += 35;
+            builder.UpdateCurrentY(yPos);
+
+            // Add model selector with saved model
+            (ui.Lbl_Model, ui.Cmb_Model) = builder.AddModelSelector(20, settings.LastModel);
             
             // Add log file checkbox
             ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, true);
             
-            // Update UI builder's Y position
+            // Update UI builder's Y position after checkbox
             yPos = builder.GetCurrentY();
 
             // Add button and status bar
@@ -172,6 +178,7 @@ namespace VO_Tool.UI
             settings.LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
             settings.LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
             settings.LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
+            settings.LastModel = ui.Cmb_Model.SelectedItem?.ToString() ?? "base";
             
             Settings.Settings.Save(settings);
         }

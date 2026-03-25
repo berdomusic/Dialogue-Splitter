@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using VO_Tool.Services;
+using VO_Tool.UI;
 
 namespace VO_Tool.Settings
 {
@@ -12,6 +13,21 @@ namespace VO_Tool.Settings
         public string LastVO_Audio_Column { get; set; } = string.Empty;
         public int LastSimilarityThreshold { get; set; } = 75;
         public WhisperModel LastModel { get; set; } = WhisperModel.Base;
+        
+        public void UpdateFromUI(UIControls ui)
+        {
+            LastExcelFile = ui.ExcelSelector.FilePath;
+            LastAudioFile = ui.AudioSelector.FilePath;
+            LastOutputFolder = ui.OutputFolderSelector.FolderPath;
+            LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
+            LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
+            LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
+            
+            if (ui.Cmb_Model.SelectedItem is WhisperModel model)
+            {
+                LastModel = model;
+            }
+        }
     }
     
     public static class Settings

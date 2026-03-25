@@ -172,17 +172,7 @@ namespace VO_Tool.UI
         
         private void SaveSettings()
         {
-            settings.LastExcelFile = ui.ExcelSelector.FilePath;
-            settings.LastAudioFile = ui.AudioSelector.FilePath;
-            settings.LastOutputFolder = ui.OutputFolderSelector.FolderPath;
-            settings.LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
-            settings.LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
-            settings.LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
-            if (ui.Cmb_Model.SelectedItem is WhisperModel model)
-            {
-                settings.LastModel = model;
-            }
-            
+            settings.UpdateFromUI(ui);
             Settings.Settings.Save(settings);
         }
         

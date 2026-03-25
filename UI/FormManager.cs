@@ -1,14 +1,19 @@
 ﻿using VO_Tool.Services;
 using VO_Tool.Status;
+using VO_Tool.Settings;
 
 namespace VO_Tool.UI
 {
     public class FormManager
     {
         private readonly UIControls ui = new UIControls();
+        private readonly AppSettings settings;
         
         public FormManager(Main form)
         {
+            // Load saved settings
+            settings = Settings.Settings.Load();
+            
             ui.ExcelService = new ExcelService();
             
             ui.MainForm = form;
@@ -21,12 +26,30 @@ namespace VO_Tool.UI
 
             // Add Excel file selector
             (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
+            
+            // Restore last Excel file if exists
+            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
+            {
+                ui.ExcelSelector.SetFilePath(settings.LastExcelFile);
+            }
 
             // Add Audio file selector
             (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
             
+            // Restore last Audio file if exists
+            if (!string.IsNullOrEmpty(settings.LastAudioFile) && File.Exists(settings.LastAudioFile))
+            {
+                ui.AudioSelector.SetFilePath(settings.LastAudioFile);
+            }
+            
             // Add Output folder selector
             (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
+            
+            // Restore last Output folder if exists
+            if (!string.IsNullOrEmpty(settings.LastOutputFolder) && Directory.Exists(settings.LastOutputFolder))
+            {
+                ui.OutputFolderSelector.SetFolderPath(settings.LastOutputFolder);
+            }
 
             // Get current Y position
             int yPos = builder.GetCurrentY();
@@ -49,6 +72,9 @@ namespace VO_Tool.UI
             builder.UpdateCurrentY(yPos);
             ui.Tb_SimilarityThreshold = builder.AddSimilaritySlider();
             
+            // Restore last similarity threshold
+            ui.Tb_SimilarityThreshold.Value = settings.LastSimilarityThreshold;
+            
             // Update UI builder's Y position
             yPos = builder.GetCurrentY();
 
@@ -64,8 +90,22 @@ namespace VO_Tool.UI
             var fileHandler = new FileSelectionHandler(ui.StatusManager, ui.ExcelService);
 
             // Subscribe to browse events
-            ui.ExcelSelector.OnFileSelected += file => _ = fileHandler.HandleExcelFileAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
-            ui.AudioSelector.OnFileSelected += file => fileHandler.HandleAudioFileSelected(file);
+            ui.ExcelSelector.OnFileSelected += file => 
+            {
+                _ = fileHandler.HandleExcelFileAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
+                SaveSettings();
+            };
+            ui.AudioSelector.OnFileSelected += file => 
+            {
+                fileHandler.HandleAudioFileSelected(file);
+                SaveSettings();
+            };
+            ui.OutputFolderSelector.OnFolderSelected += folder => SaveSettings();
+            
+            // Save settings when column selection changes
+            ui.Cmb_VO_Text_Column.SelectedIndexChanged += (s, e) => SaveSettings();
+            ui.Cmb_VO_Audio_Column.SelectedIndexChanged += (s, e) => SaveSettings();
+            ui.Tb_SimilarityThreshold.Scroll += (s, e) => SaveSettings();
             
             // Setup drag and drop
             builder.SetupFileDrop(
@@ -80,6 +120,55 @@ namespace VO_Tool.UI
                     fileHandler.HandleAudioFileSelected(file);
                 }
             );
+            
+            // Load Excel columns if there's a saved Excel file
+            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
+            {
+                _ = LoadExcelColumnsAsync(settings.LastExcelFile);
+            }
+        }
+        
+        private async Task LoadExcelColumnsAsync(string filePath)
+        {
+            var fileHandler = new FileSelectionHandler(ui.StatusManager, ui.ExcelService);
+            await fileHandler.HandleExcelFileAsync(filePath, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
+            
+            // Restore last selected columns if they exist and are valid
+            if (!string.IsNullOrEmpty(settings.LastVO_Text_Column))
+            {
+                for (int i = 0; i < ui.Cmb_VO_Text_Column.Items.Count; i++)
+                {
+                    if (ui.Cmb_VO_Text_Column.Items[i]?.ToString() == settings.LastVO_Text_Column)
+                    {
+                        ui.Cmb_VO_Text_Column.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (!string.IsNullOrEmpty(settings.LastVO_Audio_Column))
+            {
+                for (int i = 0; i < ui.Cmb_VO_Audio_Column.Items.Count; i++)
+                {
+                    if (ui.Cmb_VO_Audio_Column.Items[i]?.ToString() == settings.LastVO_Audio_Column)
+                    {
+                        ui.Cmb_VO_Audio_Column.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        private void SaveSettings()
+        {
+            settings.LastExcelFile = ui.ExcelSelector.FilePath;
+            settings.LastAudioFile = ui.AudioSelector.FilePath;
+            settings.LastOutputFolder = ui.OutputFolderSelector.FolderPath;
+            settings.LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
+            settings.LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
+            settings.LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
+            
+            Settings.Settings.Save(settings);
         }
         
         private async void OnProcessClick(object? sender, EventArgs e)

@@ -84,11 +84,12 @@ namespace VO_Tool.UI
                 DisableControls(BtnProcess);
                 
                 double similarityThreshold = WhisperService.GetSimilarityThreshold(Tb_SimilarityThreshold);
-                StatusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:F2}");
+                StatusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
                 
                 int textColumnNum = await ExcelService.GetColumnNumberFromLetter(Cmb_VO_Text_Column.SelectedItem?.ToString() ?? "A");
                 int audioColumnNum = await ExcelService.GetColumnNumberFromLetter(Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? "A");
                 
+                // Read text from Excel
                 var texts = await UIHelpers.ExecuteWithStatusAsync(
                     StatusManager,
                     () => ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, textColumnNum),
@@ -96,6 +97,7 @@ namespace VO_Tool.UI
                     $"Found {Cmb_VO_Text_Column.SelectedItem} column entries"
                 );
                 
+                // Read audio file names from Excel
                 var audioFileNames = await UIHelpers.ExecuteWithStatusAsync(
                     StatusManager,
                     () => ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, audioColumnNum),
@@ -105,12 +107,30 @@ namespace VO_Tool.UI
                 
                 StatusManager.UpdateStatus($"Loaded {texts.Count} text entries and {audioFileNames.Count} file names");
                 
+                // Transcribe audio
+                StatusManager.UpdateStatus("Starting Whisper transcription...");
+                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath);
+                
+                StatusManager.UpdateStatus($"Transcription complete. Found {segments.Count} speech segments");
+                
+                // Display first few segments for verification
+                for (int i = 0; i < Math.Min(segments.Count, 5); i++)
+                {
+                    StatusManager.UpdateStatus($"  Segment {i + 1}: {segments[i].Start:F2}s - {segments[i].End:F2}s: {segments[i].Text}");
+                }
+                
+                if (segments.Count > 5)
+                {
+                    StatusManager.UpdateStatus($"  ... and {segments.Count - 5} more segments");
+                }
+                
                 UIHelpers.ShowSuccess(
                     $"Successfully loaded:\n" +
                     $"- {texts.Count} text entries from column {Cmb_VO_Text_Column.SelectedItem}\n" +
                     $"- {audioFileNames.Count} audio file names from column {Cmb_VO_Audio_Column.SelectedItem}\n" +
                     $"- Audio file: {UIHelpers.GetFileName(AudioSelector.FilePath)}\n" +
-                    $"- Similarity threshold: {similarityThreshold:F2}"
+                    $"- Transcription: {segments.Count} speech segments detected\n" +
+                    $"- Similarity threshold: {similarityThreshold:P0}"
                 );
             }
             catch (Exception ex)

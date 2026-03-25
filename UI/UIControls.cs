@@ -18,6 +18,7 @@ namespace VO_Tool.UI
         public Label Lbl_VO_Audio_Column { get; set; }
         public ComboBox Cmb_VO_Audio_Column { get; set; }
         public TrackBar Tb_SimilarityThreshold { get; set; }
+        public CheckBox ChkCreateLogFile { get; set; }
         public Button BtnProcess { get; set; }
         public StatusManager StatusManager { get; set; }
         
@@ -82,60 +83,61 @@ namespace VO_Tool.UI
             try
             {
                 DisableControls(BtnProcess);
+                StatusManager.UpdateStatus("=== PROCESS START ===");
                 
                 double similarityThreshold = WhisperService.GetSimilarityThreshold(Tb_SimilarityThreshold);
                 StatusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
+                await Task.Delay(500);
                 
                 int textColumnNum = await ExcelService.GetColumnNumberFromLetter(Cmb_VO_Text_Column.SelectedItem?.ToString() ?? "A");
                 int audioColumnNum = await ExcelService.GetColumnNumberFromLetter(Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? "A");
                 
                 // Read text from Excel
-                var texts = await UIHelpers.ExecuteWithStatusAsync(
-                    StatusManager,
-                    () => ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, textColumnNum),
-                    "Reading text from Excel...",
-                    $"Found {Cmb_VO_Text_Column.SelectedItem} column entries"
-                );
+                StatusManager.UpdateStatus($"Reading text from column {Cmb_VO_Text_Column.SelectedItem}...");
+                var texts = await ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, textColumnNum);
+                StatusManager.UpdateStatus($"Found {texts.Count} text entries");
+                await Task.Delay(500);
                 
                 // Read audio file names from Excel
-                var audioFileNames = await UIHelpers.ExecuteWithStatusAsync(
-                    StatusManager,
-                    () => ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, audioColumnNum),
-                    "Reading audio file names...",
-                    $"Found {Cmb_VO_Audio_Column.SelectedItem} column entries"
-                );
-                
-                StatusManager.UpdateStatus($"Loaded {texts.Count} text entries and {audioFileNames.Count} file names");
+                StatusManager.UpdateStatus($"Reading file names from column {Cmb_VO_Audio_Column.SelectedItem}...");
+                var audioFileNames = await ExcelService.ReadColumnByNumberAsync(ExcelSelector.FilePath, audioColumnNum);
+                StatusManager.UpdateStatus($"Found {audioFileNames.Count} file names");
+                await Task.Delay(500);
                 
                 // Transcribe audio
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
-                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath);
-                
+                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, (msg) =>
+                {
+                    StatusManager.UpdateStatus(msg);
+                });
                 StatusManager.UpdateStatus($"Transcription complete. Found {segments.Count} speech segments");
+                await Task.Delay(500);
                 
-                // Display first few segments for verification
-                for (int i = 0; i < Math.Min(segments.Count, 5); i++)
+                if (ChkCreateLogFile.Checked)
                 {
-                    StatusManager.UpdateStatus($"  Segment {i + 1}: {segments[i].Start:F2}s - {segments[i].End:F2}s: {segments[i].Text}");
+                    StatusManager.SaveLogToFile(
+                        OutputFolderSelector.FolderPath,
+                        AudioSelector.FilePath,
+                        ExcelSelector.FilePath,
+                        Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty,
+                        Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty
+                    );
+                    StatusManager.UpdateStatus($"Log file saved to output folder");
+                    await Task.Delay(500);
                 }
                 
-                if (segments.Count > 5)
-                {
-                    StatusManager.UpdateStatus($"  ... and {segments.Count - 5} more segments");
-                }
+                StatusManager.UpdateStatus("=== PROCESS COMPLETE ===");
                 
                 UIHelpers.ShowSuccess(
-                    $"Successfully loaded:\n" +
-                    $"- {texts.Count} text entries from column {Cmb_VO_Text_Column.SelectedItem}\n" +
-                    $"- {audioFileNames.Count} audio file names from column {Cmb_VO_Audio_Column.SelectedItem}\n" +
-                    $"- Audio file: {UIHelpers.GetFileName(AudioSelector.FilePath)}\n" +
-                    $"- Transcription: {segments.Count} speech segments detected\n" +
-                    $"- Similarity threshold: {similarityThreshold:P0}"
+                    $"Successfully processed:\n" +
+                    $"- {texts.Count} text entries\n" +
+                    $"- {segments.Count} speech segments detected\n" +
+                    $"- Output folder: {OutputFolderSelector.FolderPath}"
                 );
             }
             catch (Exception ex)
             {
-                StatusManager.UpdateStatus($"Error: {ex.Message}");
+                StatusManager.UpdateStatus($"ERROR: {ex.Message}");
                 UIHelpers.ShowException($"An error occurred: {ex.Message}");
             }
             finally

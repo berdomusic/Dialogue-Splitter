@@ -75,6 +75,11 @@ namespace VO_Tool.UI
             // Restore last similarity threshold
             ui.Tb_SimilarityThreshold.Value = settings.LastSimilarityThreshold;
             
+            yPos += 35;
+            
+            // Add log file checkbox
+            ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, true);
+            
             // Update UI builder's Y position
             yPos = builder.GetCurrentY();
 

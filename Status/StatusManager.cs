@@ -1,10 +1,13 @@
-﻿namespace VO_Tool.Status
+﻿using VO_Tool.Services;
+
+namespace VO_Tool.Status
 {
     public class StatusManager
     {
         public Label GetStatusLabel() => lblStatus;
         
         private Label lblStatus = null!;
+        private bool _loggingEnabled = true;
         
         public StatusManager(int x, int y, int width, int height)
         {
@@ -27,6 +30,7 @@
             }
             
             lblStatus.Text = message;
+            LogService.AddMessage(message);
         }
         
         public void UpdatePosition(int y)
@@ -37,6 +41,25 @@
         public void AddToForm(Form form)
         {
             form.Controls.Add(lblStatus);
+        }
+        
+        public void SetLoggingEnabled(bool enabled)
+        {
+            _loggingEnabled = enabled;
+            if (!enabled)
+            {
+                LogService.ClearMessages();
+            }
+        }
+        
+        public void ClearLog()
+        {
+            LogService.ClearMessages();
+        }
+        
+        public void SaveLogToFile(string outputFolder, string audioFile, string excelFile, string textColumn, string audioColumn)
+        {
+            LogService.SaveLogToFile(outputFolder, audioFile, excelFile, textColumn, audioColumn);
         }
     }
 }

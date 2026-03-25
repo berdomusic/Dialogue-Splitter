@@ -173,6 +173,22 @@ namespace VO_Tool
             return status;
         }
         
+        public CheckBox AddCheckBox(string text, int x = 20, bool defaultChecked = true)
+        {
+            var checkBox = new CheckBox
+            {
+                Text = text,
+                Location = new Point(x, currentY),
+                Size = new Size(200, 25),
+                Checked = defaultChecked
+            };
+            form.Controls.Add(checkBox);
+            currentY += 35;
+            UpdateMaxWidth(x + 200);
+    
+            return checkBox;
+        }
+        
         public void SetupFileDrop(Control control, 
             Action<string> onExcelFile, 
             Action<string> onAudioFile,

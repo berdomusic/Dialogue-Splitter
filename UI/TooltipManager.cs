@@ -48,7 +48,7 @@
             toolTip.SetToolTip(ui.Tb_SimilarityThreshold, "Controls how aggressive Whisper merges words into segments.\n" +
                                                           "Lower = more segments (splits more easily)\n" +
                                                           "Higher = fewer segments (groups words together)\n" +
-                                                          "Recommended: 0.3-0.7 (default: 0.5)");
+                                                          "Recommended: 0.3-0.7 (default: 0.75)");
         }
     }
 }

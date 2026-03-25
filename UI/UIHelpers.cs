@@ -20,6 +20,12 @@ namespace VO_Tool.UI
                 errorMessage = "Please select an audio file.";
                 return false;
             }
+            
+            if (string.IsNullOrEmpty(ui.OutputFolderSelector.FolderPath))
+            {
+                errorMessage = "Please select an output folder.";
+                return false;
+            }
 
             if (!File.Exists(ui.ExcelSelector.FilePath))
             {

@@ -24,6 +24,9 @@ namespace VO_Tool.UI
 
             // Add Audio file selector
             (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
+            
+            // Add Output folder selector
+            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
 
             // Get current Y position
             int yPos = builder.GetCurrentY();

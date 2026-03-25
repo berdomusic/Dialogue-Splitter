@@ -9,8 +9,10 @@ namespace VO_Tool.UI
         public Form MainForm { get; set; }
         public FileSelector ExcelSelector { get; set; }
         public FileSelector AudioSelector { get; set; }
+        public FolderSelector OutputFolderSelector { get; set; }
         public Label Lbl_ExcelFile { get; set; }
         public Label Lbl_AudioFile { get; set; }
+        public Label Lbl_OutputFolder { get; set; }
         public Label Lbl_VO_Text_Column { get; set; }
         public ComboBox Cmb_VO_Text_Column { get; set; }
         public Label Lbl_VO_Audio_Column { get; set; }

@@ -82,6 +82,24 @@ namespace VO_Tool
             return (label, selector);
         }
         
+        public (Label label, FolderSelector selector) AddFolderSelectorWithLabel(string labelText, int x = 20)
+        {
+            var label = new Label
+            {
+                Text = labelText,
+                Location = new Point(x, currentY),
+                Size = new Size(120, 25)
+            };
+            form.Controls.Add(label);
+
+            var selector = new FolderSelector(labelText, x, currentY);
+            selector.AddToForm(form);
+            currentY += 50;
+            UpdateMaxWidth(x + 550);
+
+            return (label, selector);
+        }
+        
         public Button AddButton(string text, EventHandler clickHandler, int x = 250, int width = 100, int height = 35)
         {
             var button = new Button

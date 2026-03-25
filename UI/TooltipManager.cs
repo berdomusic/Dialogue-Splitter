@@ -25,6 +25,11 @@
             toolTip.SetToolTip(ui.Lbl_AudioFile, "Select the source audio file (WAV, MP3, FLAC, M4A)");
             toolTip.SetToolTip(ui.AudioSelector.GetTextBox(), "Select the source audio file (WAV, MP3, FLAC, M4A)");
             toolTip.SetToolTip(ui.AudioSelector.GetBrowseButton(), "Browse for audio file");
+            
+            // Output folder selector
+            toolTip.SetToolTip(ui.Lbl_OutputFolder, "Choose where to save the split audio files");
+            toolTip.SetToolTip(ui.OutputFolderSelector.GetTextBox(), "Choose where to save the split audio files");
+            toolTip.SetToolTip(ui.OutputFolderSelector.GetBrowseButton(), "Browse for output folder");
     
             // VO Text Column
             toolTip.SetToolTip(ui.Lbl_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");

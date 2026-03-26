@@ -137,13 +137,15 @@ namespace VO_Tool
             };
             form.Controls.Add(label);
             
+            int currentValue = Settings.Settings.Get().LastSimilarityThreshold;
+            
             var trackBar = new TrackBar
             {
                 Location = new Point(x + 140, currentY - 5),
                 Size = new Size(200, 25),
                 Minimum = min,
                 Maximum = max,
-                Value = defaultValue,
+                Value = currentValue,
                 TickFrequency = 10,
                 TickStyle = TickStyle.BottomRight
             };
@@ -151,7 +153,7 @@ namespace VO_Tool
             
             var valueLabel = new Label
             {
-                Text = $"{defaultValue / 100.0:F2}",
+                Text = $"{currentValue / 100.0:F2}",
                 Location = new Point(x + 350, currentY),
                 Size = new Size(50, 25),
                 TextAlign = System.Drawing.ContentAlignment.MiddleLeft

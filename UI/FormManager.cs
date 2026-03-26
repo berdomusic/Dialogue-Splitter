@@ -13,7 +13,7 @@ namespace VO_Tool.UI
         public FormManager(Main form)
         {
             // Load saved settings
-            settings = Settings.Settings.Load();
+            settings = VO_Tool.Settings.Settings.Get();
             
             ui.ExcelService = new ExcelService();
             
@@ -211,7 +211,7 @@ namespace VO_Tool.UI
         {
             if (_isInitializing) return;
             settings.UpdateFromUI(ui);
-            Settings.Settings.Save(settings);
+            Settings.Settings.Save();
         }
         
         private async void OnProcessClick(object? sender, EventArgs e)

@@ -38,12 +38,29 @@ namespace VO_Tool.Settings
     
     public static class Settings
     {
+        private static AppSettings? _settings;
+        private static readonly object _lock = new object();
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "VO_Tool", "settings.json"
         );
         
-        public static AppSettings Load()
+        public static AppSettings Get()
+        {
+            if (_settings == null)
+            {
+                lock (_lock)
+                {
+                    if (_settings == null)
+                    {
+                        _settings = Load();
+                    }
+                }
+            }
+            return _settings;
+        }
+        
+        private static AppSettings Load()
         {
             try
             {
@@ -58,8 +75,10 @@ namespace VO_Tool.Settings
             return new AppSettings();
         }
         
-        public static void Save(AppSettings settings)
+        public static void Save()
         {
+            if (_settings == null) return;
+            
             try
             {
                 var directory = Path.GetDirectoryName(SettingsPath);
@@ -68,10 +87,18 @@ namespace VO_Tool.Settings
                     Directory.CreateDirectory(directory);
                 }
                 
-                var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(SettingsPath, json);
             }
             catch { }
+        }
+        
+        public static void Reload()
+        {
+            lock (_lock)
+            {
+                _settings = Load();
+            }
         }
     }
 }

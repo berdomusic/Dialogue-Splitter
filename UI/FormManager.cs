@@ -6,6 +6,7 @@ namespace VO_Tool.UI
 {
     public class FormManager
     {
+        private bool _isInitializing = true;
         private readonly UIControls ui = new UIControls();
         private readonly AppSettings settings;
         
@@ -27,8 +28,9 @@ namespace VO_Tool.UI
             // Add Excel file selector
             (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
             
+            bool hasExcelFile = !string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile);
             // Restore last Excel file if exists
-            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
+            if (hasExcelFile)
             {
                 ui.ExcelSelector.SetFilePath(settings.LastExcelFile);
             }
@@ -55,14 +57,24 @@ namespace VO_Tool.UI
             int yPos = builder.GetCurrentY();
 
             // Create VO Text Column dropdown
-            (ui.Lbl_VO_Text_Column, ui.Cmb_VO_Text_Column) = builder.CreateLabeledComboBox("VO Text Column (A=1):", 20, yPos, enabled: false);
+            (ui.Lbl_VO_Text_Column, ui.Cmb_VO_Text_Column) = builder.CreateLabeledComboBox(
+                "VO Text Column (A=1):",
+                20,
+                yPos,
+                !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Text_Column : "A",
+                enabled: hasExcelFile
+                );
             form.Controls.Add(ui.Lbl_VO_Text_Column);
             form.Controls.Add(ui.Cmb_VO_Text_Column);
 
             yPos += 35;
 
             // Create VO Audio File Name Column dropdown
-            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = builder.CreateLabeledComboBox("VO Audio File Name Column (A=1):", 20, yPos, enabled: false);
+            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = builder.CreateLabeledComboBox("VO Audio File Name Column (A=1):",
+                20,
+                yPos,
+                !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Audio_Column : "A",
+                enabled: hasExcelFile);
             form.Controls.Add(ui.Lbl_VO_Audio_Column);
             form.Controls.Add(ui.Cmb_VO_Audio_Column);
 
@@ -141,6 +153,8 @@ namespace VO_Tool.UI
             {
                 _ = LoadExcelColumnsAsync(settings.LastExcelFile);
             }
+            
+            _isInitializing = false;
         }
         
         private async Task LoadExcelColumnsAsync(string filePath)
@@ -176,6 +190,7 @@ namespace VO_Tool.UI
         
         private void SaveSettings()
         {
+            if (_isInitializing) return;
             settings.UpdateFromUI(ui);
             Settings.Settings.Save(settings);
         }

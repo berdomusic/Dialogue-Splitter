@@ -43,9 +43,11 @@ namespace VO_Tool
             string labelText, 
             int x, 
             int y, 
+            string? defaultSelectedValue = null,
             int labelWidth = 130, 
             int comboBoxWidth = 200, 
-            bool enabled = false)
+            bool enabled = false
+            )
         {
             var label = new Label
             {
@@ -53,7 +55,7 @@ namespace VO_Tool
                 Location = new Point(x, y),
                 Size = new Size(labelWidth, 25)
             };
-            
+    
             var comboBox = new ComboBox
             {
                 Location = new Point(x + labelWidth + 10, y - 3),
@@ -61,7 +63,14 @@ namespace VO_Tool
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Enabled = enabled
             };
-            
+    
+            // If default value provided, add it temporarily until real data loads
+            if (!string.IsNullOrEmpty(defaultSelectedValue))
+            {
+                comboBox.Items.Add(defaultSelectedValue);
+                comboBox.SelectedIndex = 0;
+            }
+    
             return (label, comboBox);
         }
         

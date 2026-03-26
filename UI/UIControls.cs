@@ -86,6 +86,8 @@ namespace VO_Tool.UI
             
             try
             {
+                StatusManager.ClearLog();
+                
                 DisableControls(BtnProcess);
                 StatusManager.UpdateStatus("=== PROCESS START ===");
                 

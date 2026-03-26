@@ -41,6 +41,9 @@
                 writer.WriteLine();
                 writer.WriteLine("=== End of Log ===");
             }
+            
+            // Clear messages after saving to prevent them from appearing in future logs
+            ClearMessages();
         }
     }
 }

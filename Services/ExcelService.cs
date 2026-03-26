@@ -1,4 +1,6 @@
 ﻿using OfficeOpenXml;
+using VO_Tool.Status;
+using VO_Tool.UI;
 
 namespace VO_Tool.Services
 {
@@ -9,28 +11,24 @@ namespace VO_Tool.Services
             ExcelPackage.License.SetNonCommercialPersonal("VO_Tool - Audio Splitter Tool");
         }
         
-        public Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)
+        public async Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)
         {
             var columnLetters = new List<string>();
             
             using (var package = new ExcelPackage(new FileInfo(excelPath)))
             {
                 var worksheet = package.Workbook.Worksheets[0];
-                
-                // Get the dimension (used range)
                 var dimension = worksheet.Dimension;
                 
                 if (dimension == null)
                 {
-                    return Task.FromResult(columnLetters);
+                    return columnLetters;
                 }
                 
-                // Check each column in the used range
                 for (int col = dimension.Start.Column; col <= dimension.End.Column; col++)
                 {
                     bool hasData = false;
                     
-                    // Check each row in this column
                     for (int row = dimension.Start.Row; row <= dimension.End.Row; row++)
                     {
                         var cell = worksheet.Cells[row, col];
@@ -48,7 +46,41 @@ namespace VO_Tool.Services
                 }
             }
             
-            return Task.FromResult(columnLetters);
+            return columnLetters;
+        }
+        
+        public async Task LoadExcelColumnsAsync(string filePath, ComboBox textColumnCombo, ComboBox audioColumnCombo, StatusManager statusManager, Action<string, string>? onColumnsLoaded = null)
+        {
+            if (!File.Exists(filePath) || !UIHelpers.IsExcelFile(filePath)) return;
+            
+            try
+            {
+                statusManager.UpdateStatus("Loading Excel columns with data...");
+                
+                var columnLetters = await GetColumnLettersWithDataAsync(filePath);
+                
+                if (columnLetters.Count == 0)
+                {
+                    statusManager.UpdateStatus("No data found in Excel file.");
+                    return;
+                }
+                
+                UIBuilder.PopulateComboBox(textColumnCombo, columnLetters);
+                UIBuilder.PopulateComboBox(audioColumnCombo, columnLetters);
+                
+                textColumnCombo.Enabled = true;
+                audioColumnCombo.Enabled = true;
+                
+                statusManager.UpdateStatus($"Found columns with data: {string.Join(", ", columnLetters)}");
+                
+                onColumnsLoaded?.Invoke(textColumnCombo.SelectedItem?.ToString() ?? string.Empty, 
+                                       audioColumnCombo.SelectedItem?.ToString() ?? string.Empty);
+            }
+            catch (Exception ex)
+            {
+                statusManager.UpdateStatus($"Error loading Excel: {ex.Message}");
+                UIHelpers.ShowException($"Error loading Excel: {ex.Message}");
+            }
         }
         
         private string GetColumnLetter(int columnNumber)

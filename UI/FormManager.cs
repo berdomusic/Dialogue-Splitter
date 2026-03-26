@@ -6,9 +6,9 @@ namespace VO_Tool.UI
 {
     public class FormManager
     {
-        private bool _isInitializing = true;
         private readonly UIControls ui = new UIControls();
         private readonly AppSettings settings;
+        private bool _isInitializing = true;
         
         public FormManager(Main form)
         {
@@ -28,9 +28,8 @@ namespace VO_Tool.UI
             // Add Excel file selector
             (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
             
-            bool hasExcelFile = !string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile);
             // Restore last Excel file if exists
-            if (hasExcelFile)
+            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
             {
                 ui.ExcelSelector.SetFilePath(settings.LastExcelFile);
             }
@@ -56,25 +55,30 @@ namespace VO_Tool.UI
             // Get current Y position
             int yPos = builder.GetCurrentY();
 
+            // Check if we have a saved Excel file
+            bool hasExcelFile = !string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile);
+
             // Create VO Text Column dropdown
+            string defaultTextColumn = !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Text_Column : "A";
             (ui.Lbl_VO_Text_Column, ui.Cmb_VO_Text_Column) = builder.CreateLabeledComboBox(
-                "VO Text Column (A=1):",
-                20,
-                yPos,
-                !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Text_Column : "A",
-                enabled: hasExcelFile
-                );
+                "VO Text Column (A=1):", 
+                20, 
+                yPos, 
+                enabled: hasExcelFile,
+                defaultSelectedValue: defaultTextColumn);
             form.Controls.Add(ui.Lbl_VO_Text_Column);
             form.Controls.Add(ui.Cmb_VO_Text_Column);
 
             yPos += 35;
 
             // Create VO Audio File Name Column dropdown
-            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = builder.CreateLabeledComboBox("VO Audio File Name Column (A=1):",
-                20,
-                yPos,
-                !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Audio_Column : "A",
-                enabled: hasExcelFile);
+            string defaultAudioColumn = !string.IsNullOrEmpty(settings.LastVO_Audio_Column) ? settings.LastVO_Audio_Column : "A";
+            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = builder.CreateLabeledComboBox(
+                "VO Audio File Name Column (A=1):", 
+                20, 
+                yPos, 
+                enabled: hasExcelFile,
+                defaultSelectedValue: defaultAudioColumn);
             form.Controls.Add(ui.Lbl_VO_Audio_Column);
             form.Controls.Add(ui.Cmb_VO_Audio_Column);
 
@@ -112,18 +116,27 @@ namespace VO_Tool.UI
             var tooltips = new TooltipManager();
             tooltips.SetupAllTooltips(ui);
 
-            // Create file handler
-            var fileHandler = new FileSelectionHandler(ui.StatusManager, ui.ExcelService);
+            // Create file handler for audio validation
+            var fileSelectionHelper = new FileSelectionHelper();
 
             // Subscribe to browse events
             ui.ExcelSelector.OnFileSelected += file => 
             {
-                _ = fileHandler.HandleExcelFileAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
+                _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
                 SaveSettings();
             };
             ui.AudioSelector.OnFileSelected += file => 
             {
-                fileHandler.HandleAudioFileSelected(file);
+                var validation = fileSelectionHelper.ValidateAudioFile(file);
+                if (validation.IsValid)
+                {
+                    ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
+                }
+                else
+                {
+                    ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
+                    UIHelpers.ShowError(validation.ErrorMessage);
+                }
                 SaveSettings();
             };
             ui.OutputFolderSelector.OnFolderSelected += folder => SaveSettings();
@@ -132,6 +145,7 @@ namespace VO_Tool.UI
             ui.Cmb_VO_Text_Column.SelectedIndexChanged += (s, e) => SaveSettings();
             ui.Cmb_VO_Audio_Column.SelectedIndexChanged += (s, e) => SaveSettings();
             ui.Tb_SimilarityThreshold.Scroll += (s, e) => SaveSettings();
+            ui.Cmb_Model.SelectedIndexChanged += (s, e) => SaveSettings();
             ui.Cmb_Language.SelectedIndexChanged += (s, e) => SaveSettings();
             
             // Setup drag and drop
@@ -144,48 +158,53 @@ namespace VO_Tool.UI
                 onAudioFile: file =>
                 {
                     ui.AudioSelector.SetFilePath(file);
-                    fileHandler.HandleAudioFileSelected(file);
+                    var validation = fileSelectionHelper.ValidateAudioFile(file);
+                    if (validation.IsValid)
+                    {
+                        ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
+                    }
+                    else
+                    {
+                        ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
+                        UIHelpers.ShowError(validation.ErrorMessage);
+                    }
                 }
             );
             
             // Load Excel columns if there's a saved Excel file
-            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
+            if (hasExcelFile)
             {
-                _ = LoadExcelColumnsAsync(settings.LastExcelFile);
+                _ = ui.ExcelService.LoadExcelColumnsAsync(settings.LastExcelFile, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager, (textCol, audioCol) =>
+                {
+                    // Restore saved selections after columns load
+                    if (!string.IsNullOrEmpty(settings.LastVO_Text_Column))
+                    {
+                        for (int i = 0; i < ui.Cmb_VO_Text_Column.Items.Count; i++)
+                        {
+                            if (ui.Cmb_VO_Text_Column.Items[i]?.ToString() == settings.LastVO_Text_Column)
+                            {
+                                ui.Cmb_VO_Text_Column.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!string.IsNullOrEmpty(settings.LastVO_Audio_Column))
+                    {
+                        for (int i = 0; i < ui.Cmb_VO_Audio_Column.Items.Count; i++)
+                        {
+                            if (ui.Cmb_VO_Audio_Column.Items[i]?.ToString() == settings.LastVO_Audio_Column)
+                            {
+                                ui.Cmb_VO_Audio_Column.SelectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                });
             }
             
+            // Initialization complete
             _isInitializing = false;
-        }
-        
-        private async Task LoadExcelColumnsAsync(string filePath)
-        {
-            var fileHandler = new FileSelectionHandler(ui.StatusManager, ui.ExcelService);
-            await fileHandler.HandleExcelFileAsync(filePath, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column);
-            
-            // Restore last selected columns if they exist and are valid
-            if (!string.IsNullOrEmpty(settings.LastVO_Text_Column))
-            {
-                for (int i = 0; i < ui.Cmb_VO_Text_Column.Items.Count; i++)
-                {
-                    if (ui.Cmb_VO_Text_Column.Items[i]?.ToString() == settings.LastVO_Text_Column)
-                    {
-                        ui.Cmb_VO_Text_Column.SelectedIndex = i;
-                        break;
-                    }
-                }
-            }
-            
-            if (!string.IsNullOrEmpty(settings.LastVO_Audio_Column))
-            {
-                for (int i = 0; i < ui.Cmb_VO_Audio_Column.Items.Count; i++)
-                {
-                    if (ui.Cmb_VO_Audio_Column.Items[i]?.ToString() == settings.LastVO_Audio_Column)
-                    {
-                        ui.Cmb_VO_Audio_Column.SelectedIndex = i;
-                        break;
-                    }
-                }
-            }
         }
         
         private void SaveSettings()

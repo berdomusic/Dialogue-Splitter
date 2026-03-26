@@ -14,6 +14,8 @@ namespace VO_Tool.Settings
         public int LastSimilarityThreshold { get; set; } = 75;
         public WhisperModel LastModel { get; set; } = WhisperModel.Base;
         public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
+        public bool CreateLogFile { get; set; } = true;
+        public bool CreateCsvFile { get; set; }
         
         public void UpdateFromUI(UIControls ui)
         {
@@ -23,6 +25,8 @@ namespace VO_Tool.Settings
             LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
             LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
             LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
+            CreateLogFile = ui.ChkCreateLogFile.Checked;
+            CreateCsvFile = ui.ChkCreateCsvFile.Checked;
             
             if (ui.Cmb_Model.SelectedItem is WhisperModel model)
             {

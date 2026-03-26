@@ -290,7 +290,7 @@ namespace VO_Tool
             return (label, comboBox);
         }
         
-        public CheckBox AddCheckBox(string text, int x = 20, bool defaultChecked = true)
+        public CheckBox AddCheckBox(string text, int x = 20, bool defaultChecked = false)
         {
             var checkBox = new CheckBox
             {

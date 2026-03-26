@@ -23,6 +23,7 @@ namespace VO_Tool.UI
         public ComboBox Cmb_Language { get; set; }
         public Label Lbl_Language { get; set; }
         public CheckBox ChkCreateLogFile { get; set; }
+        public CheckBox ChkCreateCsvFile { get; set; }
         public Button BtnProcess { get; set; }
         public StatusManager StatusManager { get; set; }
         

@@ -14,7 +14,7 @@ namespace VO_Tool.Services
         public static string GetPythonCommand()
         {
             string[] possibleCommands = { "py", "python", "python3" };
-            
+    
             foreach (var cmd in possibleCommands)
             {
                 try
@@ -26,18 +26,22 @@ namespace VO_Tool.Services
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
                     process.StartInfo.CreateNoWindow = true;
-                    
+            
                     process.Start();
                     process.WaitForExit(3000);
-                    
+            
                     if (process.ExitCode == 0)
                     {
-                        return cmd;
+                        // Check if this Python has whisper installed
+                        if (IsWhisperInstalled(cmd))
+                        {
+                            return cmd;
+                        }
                     }
                 }
                 catch { }
             }
-            
+    
             return string.Empty;
         }
         

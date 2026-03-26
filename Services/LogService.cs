@@ -18,7 +18,15 @@
         {
             var modelName = model.ToModelString();
             var languageName = language == WhisperLanguage.Auto ? "Auto" : language.ToString();
-            var logPath = Path.Combine(outputFolder, $"split_log_{DateTime.Now:yyyyMMdd_HHmmss}_{modelName}_{languageName}.txt");
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var folderName = $"log_{timestamp}_{modelName}_{languageName}";
+            var logFolder = Path.Combine(outputFolder, folderName);
+            
+            // Create the folder
+            Directory.CreateDirectory(logFolder);
+            
+            // Put log file inside the folder
+            var logPath = Path.Combine(logFolder, $"split_log_{timestamp}_{modelName}_{languageName}.txt");
             
             using (var writer = new StreamWriter(logPath))
             {
@@ -42,7 +50,7 @@
                 writer.WriteLine("=== End of Log ===");
             }
             
-            // Clear messages after saving to prevent them from appearing in future logs
+            // Clear messages after saving
             ClearMessages();
         }
     }

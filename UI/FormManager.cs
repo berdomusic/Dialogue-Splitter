@@ -103,10 +103,9 @@ namespace VO_Tool.UI
             (ui.Lbl_Language, ui.Cmb_Language) = builder.AddLanguageSelector(20, settings.LastLanguage);
             
             // Add log file checkbox
-            ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, true);
-            
-            // Update UI builder's Y position after checkbox
-            yPos = builder.GetCurrentY();
+            ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, settings.CreateLogFile);
+            // Add CSV file checkbox
+            ui.ChkCreateCsvFile = builder.AddCheckBox("Create CSV file", 20, settings.CreateCsvFile);
 
             // Add button and status bar
             ui.BtnProcess = builder.AddButton("Process", OnProcessClick!);

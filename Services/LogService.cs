@@ -14,9 +14,11 @@
             _logMessages.Clear();
         }
         
-        public static void SaveLogToFile(string outputFolder, string audioFile, string excelFile, string textColumn, string audioColumn)
+        public static void SaveLogToFile(string outputFolder, string audioFile, string excelFile, string textColumn, string audioColumn, WhisperModel model, WhisperLanguage language)
         {
-            var logPath = Path.Combine(outputFolder, $"split_log_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
+            var modelName = model.ToModelString();
+            var languageName = language == WhisperLanguage.Auto ? "Auto" : language.ToString();
+            var logPath = Path.Combine(outputFolder, $"split_log_{DateTime.Now:yyyyMMdd_HHmmss}_{modelName}_{languageName}.txt");
             
             using (var writer = new StreamWriter(logPath))
             {
@@ -26,6 +28,8 @@
                 writer.WriteLine($"Excel file: {excelFile}");
                 writer.WriteLine($"Text column: {textColumn}");
                 writer.WriteLine($"Audio file name column: {audioColumn}");
+                writer.WriteLine($"Whisper model: {modelName}");
+                writer.WriteLine($"Language: {languageName}");
                 writer.WriteLine();
                 
                 writer.WriteLine("=== All Status Messages ===");

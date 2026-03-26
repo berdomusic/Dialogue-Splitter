@@ -176,16 +176,18 @@ namespace VO_Tool
         
         public (Label label, ComboBox comboBox) AddModelSelector(int x = 20, WhisperModel? selectedModel = null)
         {
+            int modelLabelX = 150;
             var label = new Label
             {
+                
                 Text = "Whisper Model:",
                 Location = new Point(x, currentY),
-                Size = new Size(100, 25)
+                Size = new Size(modelLabelX, 25)
             };
 
             var comboBox = new ComboBox
             {
-                Location = new Point(x + 110, currentY - 3),
+                Location = new Point(x + modelLabelX, currentY - 3),
                 Size = new Size(120, 23),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
@@ -213,6 +215,66 @@ namespace VO_Tool
             form.Controls.Add(comboBox);
             currentY += 35;
             UpdateMaxWidth(x + 240);
+
+            return (label, comboBox);
+        }
+        
+        public (Label label, ComboBox comboBox) AddLanguageSelector(int x = 20, WhisperLanguage? selectedLanguage = null)
+        {
+            var label = new Label
+            {
+                Text = "Language:",
+                Location = new Point(x, currentY),
+                Size = new Size(100, 25)
+            };
+
+            var comboBox = new ComboBox
+            {
+                Location = new Point(x + 110, currentY - 3),
+                Size = new Size(150, 23),
+                DropDownStyle = ComboBoxStyle.DropDownList
+            };
+
+            // Add Auto option first
+            comboBox.Items.Add(WhisperLanguage.Auto);
+    
+            // Add all supported languages
+            var languages = WhisperLanguageExtensions.GetSupportedLanguages();
+            foreach (var language in languages)
+            {
+                comboBox.Items.Add(language);
+            }
+
+            // Select default language
+            if (selectedLanguage.HasValue)
+            {
+                for (int i = 0; i < comboBox.Items.Count; i++)
+                {
+                    if (comboBox.Items[i] is WhisperLanguage lang && lang == selectedLanguage.Value)
+                    {
+                        comboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+    
+            // If nothing selected, default to English
+            if (comboBox.SelectedIndex == -1)
+            {
+                for (int i = 0; i < comboBox.Items.Count; i++)
+                {
+                    if (comboBox.Items[i] is WhisperLanguage lang && lang == WhisperLanguage.English)
+                    {
+                        comboBox.SelectedIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            form.Controls.Add(label);
+            form.Controls.Add(comboBox);
+            currentY += 35;
+            UpdateMaxWidth(x + 270);
 
             return (label, comboBox);
         }

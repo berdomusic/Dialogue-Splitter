@@ -38,6 +38,12 @@
             // VO Audio File Name Column
             toolTip.SetToolTip(ui.Lbl_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
             toolTip.SetToolTip(ui.Cmb_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
+            
+            toolTip.SetToolTip(ui.Lbl_Model, "Select installed Whisper model");
+            toolTip.SetToolTip(ui.Cmb_Model, "Select installed Whisper model");
+            
+            toolTip.SetToolTip(ui.Lbl_Language, "Select the language of the audio for better accuracy");
+            toolTip.SetToolTip(ui.Cmb_Language, "Select the language of the audio for better accuracy");
     
             // Process button
             toolTip.SetToolTip(ui.BtnProcess, "Start processing: load Excel data");

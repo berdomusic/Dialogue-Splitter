@@ -1,4 +1,5 @@
 ﻿using VO_Tool.Services;
+using System.Drawing;
 
 namespace VO_Tool.Status
 {
@@ -61,9 +62,9 @@ namespace VO_Tool.Status
             LogService.ClearMessages();
         }
         
-        public void SaveLogToFile(string outputFolder, string audioFile, string excelFile, string textColumn, string audioColumn)
+        public void SaveLogToFile(string outputFolder, string audioFile, string excelFile, string textColumn, string audioColumn, WhisperModel model, WhisperLanguage language)
         {
-            LogService.SaveLogToFile(outputFolder, audioFile, excelFile, textColumn, audioColumn);
+            LogService.SaveLogToFile(outputFolder, audioFile, excelFile, textColumn, audioColumn, model, language);
         }
     }
 }

@@ -20,6 +20,8 @@ namespace VO_Tool.UI
         public TrackBar Tb_SimilarityThreshold { get; set; }
         public ComboBox Cmb_Model { get; set; }
         public Label Lbl_Model { get; set; }
+        public ComboBox Cmb_Language { get; set; }
+        public Label Lbl_Language { get; set; }
         public CheckBox ChkCreateLogFile { get; set; }
         public Button BtnProcess { get; set; }
         public StatusManager StatusManager { get; set; }
@@ -117,10 +119,11 @@ namespace VO_Tool.UI
                 
                 // Get selected model
                 var selectedModel = Cmb_Model.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
+                var selectedLanguage = Cmb_Language.SelectedItem is WhisperLanguage language ? language : WhisperLanguage.English;
 
                 // Transcribe audio with selected model and prompt from Excel texts
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
-                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, selectedModel, texts, (msg) =>
+                var segments = await WhisperService.TranscribeAsync(AudioSelector.FilePath, selectedModel, selectedLanguage, texts, (msg) =>
                 {
                     StatusManager.UpdateStatus(msg);
                 });
@@ -134,7 +137,9 @@ namespace VO_Tool.UI
                         AudioSelector.FilePath,
                         ExcelSelector.FilePath,
                         Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty,
-                        Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty
+                        Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty,
+                        selectedModel,
+                        selectedLanguage
                     );
                     StatusManager.UpdateStatus($"Log file saved to output folder");
                     await Task.Delay(500);

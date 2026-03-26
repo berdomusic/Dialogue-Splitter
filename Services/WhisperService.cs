@@ -13,6 +13,7 @@ namespace VO_Tool.Services
         public static async Task<List<WhisperSegment>> TranscribeAsync(
             string audioFilePath, 
             WhisperModel model, 
+            WhisperLanguage language,
             List<string> expectedTexts,
             Action<string>? onProgress = null)
         {
@@ -39,8 +40,10 @@ namespace VO_Tool.Services
                 );
             }
             
+            
+            
             var scriptPath = Path.GetTempFileName() + ".py";
-            var script = WhisperServiceHelper.GetWhisperScript(audioFilePath, model, expectedTexts);
+            var script = WhisperServiceHelper.GetWhisperScript(audioFilePath, model, language, expectedTexts);
             
             await File.WriteAllTextAsync(scriptPath, script);
             

@@ -83,6 +83,9 @@ namespace VO_Tool.UI
             // Add model selector with saved model
             (ui.Lbl_Model, ui.Cmb_Model) = builder.AddModelSelector(20, settings.LastModel);
             
+            // Add language selector with saved language
+            (ui.Lbl_Language, ui.Cmb_Language) = builder.AddLanguageSelector(20, settings.LastLanguage);
+            
             // Add log file checkbox
             ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, true);
             
@@ -117,6 +120,7 @@ namespace VO_Tool.UI
             ui.Cmb_VO_Text_Column.SelectedIndexChanged += (s, e) => SaveSettings();
             ui.Cmb_VO_Audio_Column.SelectedIndexChanged += (s, e) => SaveSettings();
             ui.Tb_SimilarityThreshold.Scroll += (s, e) => SaveSettings();
+            ui.Cmb_Language.SelectedIndexChanged += (s, e) => SaveSettings();
             
             // Setup drag and drop
             builder.SetupFileDrop(

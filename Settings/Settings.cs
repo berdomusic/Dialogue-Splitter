@@ -13,6 +13,7 @@ namespace VO_Tool.Settings
         public string LastVO_Audio_Column { get; set; } = string.Empty;
         public int LastSimilarityThreshold { get; set; } = 75;
         public WhisperModel LastModel { get; set; } = WhisperModel.Base;
+        public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
         
         public void UpdateFromUI(UIControls ui)
         {
@@ -26,6 +27,11 @@ namespace VO_Tool.Settings
             if (ui.Cmb_Model.SelectedItem is WhisperModel model)
             {
                 LastModel = model;
+            }
+            
+            if (ui.Cmb_Language.SelectedItem is WhisperLanguage language)
+            {
+                LastLanguage = language;
             }
         }
     }

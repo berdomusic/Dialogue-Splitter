@@ -46,7 +46,8 @@ namespace VO_Tool
             string? defaultSelectedValue = null,
             int labelWidth = 130, 
             int comboBoxWidth = 200, 
-            bool enabled = false
+            bool enabled = false,
+            EventHandler? onSelectedIndexChanged = null
             )
         {
             var label = new Label
@@ -70,11 +71,21 @@ namespace VO_Tool
                 comboBox.Items.Add(defaultSelectedValue);
                 comboBox.SelectedIndex = 0;
             }
+            
+            // Attach event if provided
+            if (onSelectedIndexChanged != null)
+            {
+                comboBox.SelectedIndexChanged += onSelectedIndexChanged;
+            }
     
             return (label, comboBox);
         }
         
-        public (Label label, FileSelector selector) AddFileSelectorWithLabel(string labelText, string fileFilter, int x = 20)
+        public (Label label, FileSelector selector) AddFileSelectorWithLabel(
+            string labelText, 
+            string fileFilter, 
+            int x = 20,
+            Action<string>? onFileSelected = null)
         {
             var label = new Label
             {
@@ -85,6 +96,12 @@ namespace VO_Tool
             form.Controls.Add(label);
     
             var selector = new FileSelector(labelText, fileFilter, x, currentY);
+            
+            if (onFileSelected != null)
+            {
+                selector.OnFileSelected += onFileSelected;
+            }
+            
             selector.AddToForm(form);
             currentY += 50;
             UpdateMaxWidth(x + 550);
@@ -92,7 +109,10 @@ namespace VO_Tool
             return (label, selector);
         }
         
-        public (Label label, FolderSelector selector) AddFolderSelectorWithLabel(string labelText, int x = 20)
+        public (Label label, FolderSelector selector) AddFolderSelectorWithLabel(
+            string labelText, 
+            int x = 20,
+            Action<string>? onFolderSelected = null)
         {
             var label = new Label
             {
@@ -103,6 +123,12 @@ namespace VO_Tool
             form.Controls.Add(label);
 
             var selector = new FolderSelector(labelText, x, currentY);
+            
+            if (onFolderSelected != null)
+            {
+                selector.OnFolderSelected += onFolderSelected;
+            }
+            
             selector.AddToForm(form);
             currentY += 50;
             UpdateMaxWidth(x + 550);
@@ -127,7 +153,12 @@ namespace VO_Tool
             return button;
         }
         
-        public TrackBar AddSimilaritySlider(int x = 20, int min = 10, int max = 100, int defaultValue = 75)
+        public TrackBar AddSimilaritySlider(
+            int x = 20, 
+            int min = 10, 
+            int max = 100, 
+            int defaultValue = 75,
+            EventHandler? onScroll = null)
         {
             var label = new Label
             {
@@ -149,6 +180,12 @@ namespace VO_Tool
                 TickFrequency = 10,
                 TickStyle = TickStyle.BottomRight
             };
+            
+            if (onScroll != null)
+            {
+                trackBar.Scroll += onScroll;
+            }
+            
             form.Controls.Add(trackBar);
             
             var valueLabel = new Label
@@ -185,7 +222,10 @@ namespace VO_Tool
             return status;
         }
         
-        public (Label label, ComboBox comboBox) AddModelSelector(int x = 20, WhisperModel? selectedModel = null)
+        public (Label label, ComboBox comboBox) AddModelSelector(
+            int x = 20, 
+            WhisperModel? selectedModel = null,
+            EventHandler? onSelectedIndexChanged = null)
         {
             int modelLabelX = 150;
             var label = new Label
@@ -221,6 +261,12 @@ namespace VO_Tool
             {
                 comboBox.SelectedItem = selectedModel.Value;
             }
+            
+            // Attach event if provided
+            if (onSelectedIndexChanged != null)
+            {
+                comboBox.SelectedIndexChanged += onSelectedIndexChanged;
+            }
 
             form.Controls.Add(label);
             form.Controls.Add(comboBox);
@@ -230,7 +276,10 @@ namespace VO_Tool
             return (label, comboBox);
         }
         
-        public (Label label, ComboBox comboBox) AddLanguageSelector(int x = 20, WhisperLanguage? selectedLanguage = null)
+        public (Label label, ComboBox comboBox) AddLanguageSelector(
+            int x = 20, 
+            WhisperLanguage? selectedLanguage = null,
+            EventHandler? onSelectedIndexChanged = null)
         {
             var label = new Label
             {
@@ -281,6 +330,12 @@ namespace VO_Tool
                     }
                 }
             }
+            
+            // Attach event if provided
+            if (onSelectedIndexChanged != null)
+            {
+                comboBox.SelectedIndexChanged += onSelectedIndexChanged;
+            }
 
             form.Controls.Add(label);
             form.Controls.Add(comboBox);
@@ -290,7 +345,11 @@ namespace VO_Tool
             return (label, comboBox);
         }
         
-        public CheckBox AddCheckBox(string text, int x = 20, bool defaultChecked = false)
+        public CheckBox AddCheckBox(
+            string text, 
+            int x = 20, 
+            bool defaultChecked = false,
+            EventHandler? onCheckedChanged = null)
         {
             var checkBox = new CheckBox
             {
@@ -299,6 +358,12 @@ namespace VO_Tool
                 Size = new Size(200, 25),
                 Checked = defaultChecked
             };
+            
+            if (onCheckedChanged != null)
+            {
+                checkBox.CheckedChanged += onCheckedChanged;
+            }
+            
             form.Controls.Add(checkBox);
             currentY += 35;
             UpdateMaxWidth(x + 200);

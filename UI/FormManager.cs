@@ -25,32 +25,42 @@ namespace VO_Tool.UI
             builder.CenterForm();
             form.Text = "Audio Splitter - Speech to Text";
 
-            // Add Excel file selector
-            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
-            
-            // Restore last Excel file if exists
-            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
-            {
-                ui.ExcelSelector.SetFilePath(settings.LastExcelFile);
-            }
+            // Add Excel file selector with save callback
+            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel(
+                "Excel File:", 
+                "Excel Files|*.xlsx;*.xls|All Files|*.*",
+                20,
+                file => 
+                {
+                    _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
+                    SaveSettings();
+                });
 
-            // Add Audio file selector
-            (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
+            // Add Audio file selector with save callback
+            (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel(
+                "Audio File:", 
+                "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*",
+                20,
+                file => 
+                {
+                    var validation = new FileSelectionHelper().ValidateAudioFile(file);
+                    if (validation.IsValid)
+                    {
+                        ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
+                    }
+                    else
+                    {
+                        ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
+                        UIHelpers.ShowError(validation.ErrorMessage);
+                    }
+                    SaveSettings();
+                });
             
-            // Restore last Audio file if exists
-            if (!string.IsNullOrEmpty(settings.LastAudioFile) && File.Exists(settings.LastAudioFile))
-            {
-                ui.AudioSelector.SetFilePath(settings.LastAudioFile);
-            }
-            
-            // Add Output folder selector
-            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
-            
-            // Restore last Output folder if exists
-            if (!string.IsNullOrEmpty(settings.LastOutputFolder) && Directory.Exists(settings.LastOutputFolder))
-            {
-                ui.OutputFolderSelector.SetFolderPath(settings.LastOutputFolder);
-            }
+            // Add Output folder selector with save callback
+            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel(
+                "Output Folder:",
+                20,
+                folder => SaveSettings());
 
             // Get current Y position
             int yPos = builder.GetCurrentY();
@@ -64,8 +74,9 @@ namespace VO_Tool.UI
                 "VO Text Column (A=1):", 
                 20, 
                 yPos, 
+                defaultSelectedValue: defaultTextColumn,
                 enabled: hasExcelFile,
-                defaultSelectedValue: defaultTextColumn);
+                onSelectedIndexChanged: (s, e) => SaveSettings());
             form.Controls.Add(ui.Lbl_VO_Text_Column);
             form.Controls.Add(ui.Cmb_VO_Text_Column);
 
@@ -77,35 +88,50 @@ namespace VO_Tool.UI
                 "VO Audio File Name Column (A=1):", 
                 20, 
                 yPos, 
+                defaultSelectedValue: defaultAudioColumn,
                 enabled: hasExcelFile,
-                defaultSelectedValue: defaultAudioColumn);
+                onSelectedIndexChanged: (s, e) => SaveSettings());
             form.Controls.Add(ui.Lbl_VO_Audio_Column);
             form.Controls.Add(ui.Cmb_VO_Audio_Column);
 
             yPos += 35;
 
-            // Add similarity threshold slider using builder
+            // Add similarity threshold slider with save callback
             builder.UpdateCurrentY(yPos);
-            ui.Tb_SimilarityThreshold = builder.AddSimilaritySlider();
-            
-            // Restore last similarity threshold
-            ui.Tb_SimilarityThreshold.Value = settings.LastSimilarityThreshold;
+            ui.Tb_SimilarityThreshold = builder.AddSimilaritySlider(
+                20, 10, 100, 75,
+                onScroll: (s, e) => SaveSettings());
             
             // Update builder's Y position after slider and add extra space
             yPos = builder.GetCurrentY();
             yPos += 35;
             builder.UpdateCurrentY(yPos);
 
-            // Add model selector with saved model
-            (ui.Lbl_Model, ui.Cmb_Model) = builder.AddModelSelector(20, settings.LastModel);
+            // Add model selector with saved model and save callback
+            (ui.Lbl_Model, ui.Cmb_Model) = builder.AddModelSelector(
+                20, 
+                settings.LastModel,
+                onSelectedIndexChanged: (s, e) => SaveSettings());
             
-            // Add language selector with saved language
-            (ui.Lbl_Language, ui.Cmb_Language) = builder.AddLanguageSelector(20, settings.LastLanguage);
+            // Add language selector with saved language and save callback
+            (ui.Lbl_Language, ui.Cmb_Language) = builder.AddLanguageSelector(
+                20, 
+                settings.LastLanguage,
+                onSelectedIndexChanged: (s, e) => SaveSettings());
             
-            // Add log file checkbox
-            ui.ChkCreateLogFile = builder.AddCheckBox("Create log file in output folder", 20, settings.CreateLogFile);
-            // Add CSV file checkbox
-            ui.ChkCreateCsvFile = builder.AddCheckBox("Create CSV file", 20, settings.CreateCsvFile);
+            // Add log file checkbox with save callback
+            ui.ChkCreateLogFile = builder.AddCheckBox(
+                "Create log file in output folder", 
+                20, 
+                settings.CreateLogFile,
+                onCheckedChanged: (s, e) => SaveSettings());
+            
+            // Add CSV file checkbox with save callback
+            ui.ChkCreateCsvFile = builder.AddCheckBox(
+                "Create CSV file", 
+                20, 
+                settings.CreateCsvFile,
+                onCheckedChanged: (s, e) => SaveSettings());
 
             // Add button and status bar
             ui.BtnProcess = builder.AddButton("Process", OnProcessClick!);
@@ -115,38 +141,6 @@ namespace VO_Tool.UI
             var tooltips = new TooltipManager();
             tooltips.SetupAllTooltips(ui);
 
-            // Create file handler for audio validation
-            var fileSelectionHelper = new FileSelectionHelper();
-
-            // Subscribe to browse events
-            ui.ExcelSelector.OnFileSelected += file => 
-            {
-                _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
-                SaveSettings();
-            };
-            ui.AudioSelector.OnFileSelected += file => 
-            {
-                var validation = fileSelectionHelper.ValidateAudioFile(file);
-                if (validation.IsValid)
-                {
-                    ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
-                }
-                else
-                {
-                    ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
-                    UIHelpers.ShowError(validation.ErrorMessage);
-                }
-                SaveSettings();
-            };
-            ui.OutputFolderSelector.OnFolderSelected += folder => SaveSettings();
-            
-            // Save settings when column selection changes
-            ui.Cmb_VO_Text_Column.SelectedIndexChanged += (s, e) => SaveSettings();
-            ui.Cmb_VO_Audio_Column.SelectedIndexChanged += (s, e) => SaveSettings();
-            ui.Tb_SimilarityThreshold.Scroll += (s, e) => SaveSettings();
-            ui.Cmb_Model.SelectedIndexChanged += (s, e) => SaveSettings();
-            ui.Cmb_Language.SelectedIndexChanged += (s, e) => SaveSettings();
-            
             // Setup drag and drop
             builder.SetupFileDrop(
                 form,
@@ -157,7 +151,7 @@ namespace VO_Tool.UI
                 onAudioFile: file =>
                 {
                     ui.AudioSelector.SetFilePath(file);
-                    var validation = fileSelectionHelper.ValidateAudioFile(file);
+                    var validation = new FileSelectionHelper().ValidateAudioFile(file);
                     if (validation.IsValid)
                     {
                         ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");

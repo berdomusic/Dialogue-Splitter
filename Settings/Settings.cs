@@ -96,13 +96,5 @@ namespace VO_Tool.Settings
             }
             catch { }
         }
-        
-        public static void Reload()
-        {
-            lock (_lock)
-            {
-                _settings = Load();
-            }
-        }
     }
 }

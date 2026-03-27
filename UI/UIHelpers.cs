@@ -97,6 +97,21 @@ namespace VO_Tool.UI
             return Path.GetFileName(filePath);
         }
         
+        // ============ Time Formatting ============
+        public static string FormatTime(double seconds)
+        {
+            var ts = TimeSpan.FromSeconds(seconds);
+            
+            if (ts.TotalHours >= 1)
+            {
+                return $"{ts.Hours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}.{ts.Milliseconds:D3}";
+            }
+            else
+            {
+                return $"{ts.Minutes:D2}:{ts.Seconds:D2}.{ts.Milliseconds:D3}";
+            }
+        }
+        
         // ============ Async Operation Helpers ============
         public static async Task<T> ExecuteWithStatusAsync<T>(StatusManager status, Func<Task<T>> action, string loadingMessage, string successMessage)
         {

@@ -60,6 +60,45 @@
                 "• 95% - Contains the text\n" +
                 "• 70-90% - Levenshtein ratio + word overlap\n\n" +
                 "Recommended: 70-85% ");
+            
+            // Log file checkbox
+            toolTip.SetToolTip(ui.ChkCreateLogFile, 
+                "Create a detailed log file with all status messages, timestamps, and processing information.\n\n" +
+                "The log is saved in a folder named: log_YYYYMMDD_HHMMSS_model_language/\n" +
+                "File name: split_log_YYYYMMDD_HHMMSS_model_language.txt");
+            
+            // CSV file checkbox
+            toolTip.SetToolTip(ui.ChkCreateCsvFile, 
+                "Create a CSV file with all matched segments that passed the similarity threshold.\n\n" +
+                "Columns: Source Audio File, Start, End, Audio File Name, Expected Text, Transcribed Text, Similarity\n\n" +
+                "The CSV is saved in the same folder as the log file.\n" +
+                "File name: matches_YYYYMMDD_HHMMSS.csv");
+            
+            // Start Padding tooltip
+            toolTip.SetToolTip(ui.LblStartPadding, 
+                "Adjust the start time of each segment in the CSV export.\n\n" +
+                "Positive values add time before the detected segment.\n" +
+                "Negative values cut time from the beginning of the segment.\n\n" +
+                "Range: -2.00 to +2.00 seconds\n" +
+                "Default: 0.20 seconds");
+            toolTip.SetToolTip(ui.NudStartPadding, 
+                "Adjust the start time of each segment in the CSV export.\n\n" +
+                "Positive values add time before the detected segment.\n" +
+                "Negative values cut time from the beginning of the segment.\n\n" +
+                "Range: -2.00 to +2.00 seconds\n");
+            
+            // End Padding tooltip
+            toolTip.SetToolTip(ui.LblEndPadding, 
+                "Adjust the end time of each segment in the CSV export.\n\n" +
+                "Positive values add time after the detected segment.\n" +
+                "Negative values cut time from the end of the segment.\n\n" +
+                "Range: -2.00 to +2.00 seconds\n");
+            toolTip.SetToolTip(ui.NudEndPadding, 
+                "Adjust the end time of each segment in the CSV export.\n\n" +
+                "Positive values add time after the detected segment.\n" +
+                "Negative values cut time from the end of the segment.\n\n" +
+                "Range: -2.00 to +2.00 seconds\n" +
+                "Default: 0.50 seconds");
         }
     }
 }

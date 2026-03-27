@@ -40,8 +40,6 @@ namespace VO_Tool.Services
                 );
             }
             
-            
-            
             var scriptPath = Path.GetTempFileName() + ".py";
             var script = WhisperServiceHelper.GetWhisperScript(audioFilePath, model, language, expectedTexts);
             
@@ -91,13 +89,13 @@ namespace VO_Tool.Services
                 var lines = output.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var line in lines)
                 {
-                    if (line.StartsWith("[") && line.Contains("s - "))
+                    if (line.StartsWith("[") && line.Contains(" - "))
                     {
-                        var parts = line.Split(']')[0].TrimStart('[').Split("s - ");
+                        var parts = line.Split(']')[0].TrimStart('[').Split(" - ");
                         if (parts.Length == 2)
                         {
-                            if (double.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double start) &&
-                                double.TryParse(parts[1].TrimEnd('s'), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double end))
+                            if (TryParseFormattedTime(parts[0], out double start) &&
+                                TryParseFormattedTime(parts[1], out double end))
                             {
                                 var text = line.Split(']')[1].Trim();
                                 segments.Add(new WhisperSegment
@@ -118,6 +116,34 @@ namespace VO_Tool.Services
             }
             
             return segments;
+        }
+        
+        private static bool TryParseFormattedTime(string timeStr, out double seconds)
+        {
+            seconds = 0;
+            try
+            {
+                var parts = timeStr.Split(':');
+                if (parts.Length == 2)
+                {
+                    // MM:SS.mmm
+                    int minutes = int.Parse(parts[0]);
+                    double secs = double.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture);
+                    seconds = minutes * 60 + secs;
+                    return true;
+                }
+                else if (parts.Length == 3)
+                {
+                    // HH:MM:SS.mmm
+                    int hours = int.Parse(parts[0]);
+                    int minutes = int.Parse(parts[1]);
+                    double secs = double.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture);
+                    seconds = hours * 3600 + minutes * 60 + secs;
+                    return true;
+                }
+            }
+            catch { }
+            return false;
         }
     }
 }

@@ -371,6 +371,46 @@ namespace VO_Tool
             return checkBox;
         }
         
+        public (Label label, NumericUpDown numericUpDown) AddNumericUpDown(
+            string labelText,
+            decimal defaultValue,
+            decimal min = -2,
+            decimal max = 2,
+            decimal increment = 0.05m,
+            int x = 20,
+            EventHandler? onValueChanged = null)
+        {
+            var label = new Label
+            {
+                Text = labelText,
+                Location = new Point(x, currentY),
+                Size = new Size(120, 25)
+            };
+            form.Controls.Add(label);
+
+            var numericUpDown = new NumericUpDown
+            {
+                Location = new Point(x + 130, currentY),
+                Size = new Size(80, 23),
+                Minimum = min,
+                Maximum = max,
+                Increment = increment,
+                DecimalPlaces = 2,
+                Value = defaultValue
+            };
+    
+            if (onValueChanged != null)
+            {
+                numericUpDown.ValueChanged += onValueChanged;
+            }
+    
+            form.Controls.Add(numericUpDown);
+            currentY += 35;
+            UpdateMaxWidth(x + 220);
+    
+            return (label, numericUpDown);
+        }
+        
         public void SetupFileDrop(Control control, 
             Action<string> onExcelFile, 
             Action<string> onAudioFile,

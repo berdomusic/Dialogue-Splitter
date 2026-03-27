@@ -24,6 +24,10 @@ namespace VO_Tool.UI
         public Label Lbl_Language { get; set; }
         public CheckBox ChkCreateLogFile { get; set; }
         public CheckBox ChkCreateCsvFile { get; set; }
+        public NumericUpDown NudStartPadding { get; set; }
+        public NumericUpDown NudEndPadding { get; set; }
+        public Label LblStartPadding { get; set; }
+        public Label LblEndPadding { get; set; }
         public Button BtnProcess { get; set; }
         public StatusManager StatusManager { get; set; }
         
@@ -149,8 +153,12 @@ namespace VO_Tool.UI
 
                 StatusManager.UpdateStatus($"Matched {matchedCount} of {totalTexts} texts (Segments: {totalSegments})");
                 
-                // Create CSV data (always in memory)
-                string csvData = CsvService.CreateMatchesCsvData(matches);
+                // Get padding values
+                double startPadding = (double)NudStartPadding.Value;
+                double endPadding = (double)NudEndPadding.Value;
+                
+                // Create CSV data with padding
+                string csvData = CsvService.CreateMatchesCsvData(matches, startPadding, endPadding);
                 
                 // Show match summary
                 StatusManager.UpdateStatus("=== MATCH SUMMARY ===");
@@ -162,7 +170,9 @@ namespace VO_Tool.UI
                         if (match.Segment != null)
                         {
                             string status = match.IsMatch ? "✓" : "✗";
-                            StatusManager.UpdateStatus($"{status} [{match.Segment.Start:F1}s - {match.Segment.End:F1}s] '{match.Segment.Text}' -> '{match.ExpectedText}' ({match.Similarity:P0})");
+                            string start = UIHelpers.FormatTime(match.Segment.Start);
+                            string end = UIHelpers.FormatTime(match.Segment.End);
+                            StatusManager.UpdateStatus($"{status} [{start} - {end}] '{match.Segment.Text}' -> '{match.ExpectedText}' ({match.Similarity:P0})");
                         }
                         else
                         {
@@ -197,7 +207,7 @@ namespace VO_Tool.UI
                         var logPath = Path.Combine(outputFolder, $"split_log_{timestamp}_{modelName}_{languageName}.txt");
                         
                         // Get all log messages from StatusManager
-                        var logMessages = StatusManager.GetLogMessages(); // You'll need to expose this from StatusManager
+                        var logMessages = StatusManager.GetLogMessages();
                         
                         using (var writer = new StreamWriter(logPath))
                         {

@@ -33,7 +33,6 @@ namespace VO_Tool.Services
             
                     if (process.ExitCode == 0)
                     {
-                        // Check if this Python has whisper installed
                         if (IsWhisperInstalled(cmd))
                         {
                             return cmd;
@@ -75,12 +74,16 @@ namespace VO_Tool.Services
             var modelName = model.ToModelString();
             var languageCode = language.ToLanguageCode();
 
-            // Only add language parameter if not Auto
             var languageParam = language != WhisperLanguage.Auto ? $", language='{languageCode}'" : "";
 
             return @"
 import whisper
 import sys
+
+def format_time(seconds):
+    minutes = int(seconds // 60)
+    secs = seconds % 60
+    return f""{minutes:02d}:{secs:06.3f}""
 
 audio_file = r'" + audioFilePath + @"'
 
@@ -91,7 +94,9 @@ for seg in result['segments']:
     start = seg['start']
     end = seg['end']
     text = seg['text'].strip()
-    print(f'[{start:.2f}s - {end:.2f}s] {text}', flush=True)
+    start_str = format_time(start)
+    end_str = format_time(end)
+    print(f'[{start_str} - {end_str}] {text}', flush=True)
 ";
         }
     }

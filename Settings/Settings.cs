@@ -16,6 +16,8 @@ namespace VO_Tool.Settings
         public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
         public bool CreateLogFile { get; set; } = true;
         public bool CreateCsvFile { get; set; } = true;
+        public double StartPaddingSeconds { get; set; } = -.1;
+        public double EndPaddingSeconds { get; set; } = .1;
         
         public void UpdateFromUI(UIControls ui)
         {
@@ -27,6 +29,8 @@ namespace VO_Tool.Settings
             LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
             CreateLogFile = ui.ChkCreateLogFile.Checked;
             CreateCsvFile = ui.ChkCreateCsvFile.Checked;
+            StartPaddingSeconds = (double)ui.NudStartPadding.Value;
+            EndPaddingSeconds = (double)ui.NudEndPadding.Value;
             
             if (ui.Cmb_Model.SelectedItem is WhisperModel model)
             {

@@ -142,6 +142,20 @@ namespace VO_Tool.UI
                 20, 
                 settings.CreateCsvFile,
                 onCheckedChanged: (s, e) => SaveSettings());
+            
+            // Start padding - can be negative (cut from beginning)
+            (ui.LblStartPadding, ui.NudStartPadding) = builder.AddNumericUpDown(
+                "Start Padding (s):", 
+                (decimal)settings.StartPaddingSeconds, 
+                -2, 2, 0.05m, 20,
+                (s, e) => SaveSettings());
+
+            // End padding - can be negative (cut from end)
+            (ui.LblEndPadding, ui.NudEndPadding) = builder.AddNumericUpDown(
+                "End Padding (s):", 
+                (decimal)settings.EndPaddingSeconds, 
+                -2, 2, 0.05m, 20,
+                (s, e) => SaveSettings());
 
             // Add button and status bar
             ui.BtnProcess = builder.AddButton("Process", OnProcessClick!);

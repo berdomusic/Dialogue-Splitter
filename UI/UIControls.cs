@@ -93,6 +93,7 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus("=== PROCESS START ===");
                 
                 var startTime = DateTime.Now;
+                var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 
                 double similarityThreshold = WhisperService.GetSimilarityThreshold(Tb_SimilarityThreshold);
                 StatusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
@@ -125,6 +126,8 @@ namespace VO_Tool.UI
                 // Get selected model
                 var selectedModel = Cmb_Model.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
                 var selectedLanguage = Cmb_Language.SelectedItem is WhisperLanguage language ? language : WhisperLanguage.English;
+                var modelName = selectedModel.ToModelString();
+                var languageName = selectedLanguage == WhisperLanguage.Auto ? "Auto" : selectedLanguage.ToString();
 
                 // Transcribe audio with selected model and prompt from Excel texts
                 StatusManager.UpdateStatus("Starting Whisper transcription...");
@@ -145,6 +148,9 @@ namespace VO_Tool.UI
                 int totalSegments = segments.Count;
 
                 StatusManager.UpdateStatus($"Matched {matchedCount} of {totalTexts} texts (Segments: {totalSegments})");
+                
+                // Create CSV data (always in memory)
+                string csvData = CsvService.CreateMatchesCsvData(matches);
                 
                 // Show match summary
                 StatusManager.UpdateStatus("=== MATCH SUMMARY ===");
@@ -176,34 +182,46 @@ namespace VO_Tool.UI
                 
                 StatusManager.UpdateStatus("=== PROCESS COMPLETE ===");
                 
-                // Log
-                if (ChkCreateLogFile.Checked)
-                {
-                    StatusManager.SaveLogToFile(
-                        OutputFolderSelector.FolderPath,
-                        AudioSelector.FilePath,
-                        ExcelSelector.FilePath,
-                        Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty,
-                        Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty,
-                        selectedModel,
-                        selectedLanguage
-                    );
-                    StatusManager.UpdateStatus($"Log file saved to output folder");
-                    await Task.Delay(500);
-                }
+                // Create folder if any output is enabled
+                bool shouldCreateFolder = ChkCreateLogFile.Checked || ChkCreateCsvFile.Checked;
                 
-                // CSV
-                if (ChkCreateCsvFile.Checked)
+                if (shouldCreateFolder)
                 {
-                    TextMatchingService.SaveMatchesToCsv(matches, OutputFolderSelector.FolderPath);
-                    StatusManager.UpdateStatus($"Match report CSV saved to output folder");
-                    await Task.Delay(500);
+                    var folderName = $"log_{timestamp}_{modelName}_{languageName}";
+                    var outputFolder = Path.Combine(OutputFolderSelector.FolderPath, folderName);
+                    Directory.CreateDirectory(outputFolder);
+                    
+                    // Log - save to file if checkbox is checked
+                    if (ChkCreateLogFile.Checked)
+                    {
+                        StatusManager.SaveLogToFile(
+                            outputFolder,
+                            AudioSelector.FilePath,
+                            ExcelSelector.FilePath,
+                            Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty,
+                            Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty,
+                            selectedModel,
+                            selectedLanguage
+                        );
+                        StatusManager.UpdateStatus($"Log file saved to output folder");
+                        await Task.Delay(500);
+                    }
+                    
+                    // CSV - save to file only if checkbox is checked
+                    if (ChkCreateCsvFile.Checked && !string.IsNullOrEmpty(csvData))
+                    {
+                        var csvPath = Path.Combine(outputFolder, $"matches_{timestamp}.csv");
+                        File.WriteAllText(csvPath, csvData, System.Text.Encoding.UTF8);
+                        StatusManager.UpdateStatus($"Match report CSV saved to output folder");
+                        await Task.Delay(500);
+                    }
                 }
                 
                 UIHelpers.ShowSuccess(
                     $"Successfully processed:\n" +
                     $"- {texts.Count} text entries\n" +
                     $"- {segments.Count} speech segments detected\n" +
+                    $"- {matchedCount} matches above threshold\n" +
                     $"- Output folder: {OutputFolderSelector.FolderPath}"
                 );
             }

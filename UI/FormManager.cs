@@ -16,7 +16,6 @@ namespace VO_Tool.UI
             settings = VO_Tool.Settings.Settings.Get();
             
             ui.ExcelService = new ExcelService();
-            
             ui.MainForm = form;
 
             var builder = new UIBuilder(form);
@@ -25,42 +24,53 @@ namespace VO_Tool.UI
             builder.CenterForm();
             form.Text = "Audio Splitter - Speech to Text";
 
-            // Add Excel file selector with save callback
-            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel(
-                "Excel File:", 
-                "Excel Files|*.xlsx;*.xls|All Files|*.*",
-                20,
-                file => 
-                {
-                    _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
-                    SaveSettings();
-                });
-
-            // Add Audio file selector with save callback
-            (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel(
-                "Audio File:", 
-                "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*",
-                20,
-                file => 
-                {
-                    var validation = new FileSelectionHelper().ValidateAudioFile(file);
-                    if (validation.IsValid)
-                    {
-                        ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
-                    }
-                    else
-                    {
-                        ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
-                        UIHelpers.ShowError(validation.ErrorMessage);
-                    }
-                    SaveSettings();
-                });
+            // Add Excel file selector (without callback yet)
+            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
             
-            // Add Output folder selector with save callback
-            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel(
-                "Output Folder:",
-                20,
-                folder => SaveSettings());
+            if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
+            {
+                ui.ExcelSelector.SetFilePath(settings.LastExcelFile);
+            }
+
+            // Add Audio file selector (without callback yet)
+            (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
+            
+            if (!string.IsNullOrEmpty(settings.LastAudioFile) && File.Exists(settings.LastAudioFile))
+            {
+                ui.AudioSelector.SetFilePath(settings.LastAudioFile);
+            }
+            
+            // Add Output folder selector (without callback yet)
+            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
+            
+            if (!string.IsNullOrEmpty(settings.LastOutputFolder) && Directory.Exists(settings.LastOutputFolder))
+            {
+                ui.OutputFolderSelector.SetFolderPath(settings.LastOutputFolder);
+            }
+
+            // Add event handlers after restoration
+            ui.ExcelSelector.OnFileSelected += file => 
+            {
+                _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
+                SaveSettings();
+            };
+            
+            ui.AudioSelector.OnFileSelected += file => 
+            {
+                var validation = new FileSelectionHelper().ValidateAudioFile(file);
+                if (validation.IsValid)
+                {
+                    ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
+                }
+                else
+                {
+                    ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
+                    UIHelpers.ShowError(validation.ErrorMessage);
+                }
+                SaveSettings();
+            };
+            
+            ui.OutputFolderSelector.OnFolderSelected += folder => SaveSettings();
 
             // Get current Y position
             int yPos = builder.GetCurrentY();
@@ -151,16 +161,6 @@ namespace VO_Tool.UI
                 onAudioFile: file =>
                 {
                     ui.AudioSelector.SetFilePath(file);
-                    var validation = new FileSelectionHelper().ValidateAudioFile(file);
-                    if (validation.IsValid)
-                    {
-                        ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
-                    }
-                    else
-                    {
-                        ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
-                        UIHelpers.ShowError(validation.ErrorMessage);
-                    }
                 }
             );
             

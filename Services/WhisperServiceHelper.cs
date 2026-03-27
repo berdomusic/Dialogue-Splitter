@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 
 namespace VO_Tool.Services
 {
@@ -12,6 +14,8 @@ namespace VO_Tool.Services
     
     public static class WhisperServiceHelper
     {
+        private static string? _scriptContent;
+        
         public static string GetPythonCommand()
         {
             string[] possibleCommands = { "py", "python", "python3" };
@@ -69,35 +73,99 @@ namespace VO_Tool.Services
             }
         }
         
-        public static string GetWhisperScript(string audioFilePath, WhisperModel model, WhisperLanguage language, List<string> expectedTexts)
+        public static string GetEmbeddedScriptPath()
         {
-            var modelName = model.ToModelString();
-            var languageCode = language.ToLanguageCode();
-
-            var languageParam = language != WhisperLanguage.Auto ? $", language='{languageCode}'" : "";
-
-            return @"
-import whisper
-import sys
-
-def format_time(seconds):
-    minutes = int(seconds // 60)
-    secs = seconds % 60
-    return f""{minutes:02d}:{secs:06.3f}""
-
-audio_file = r'" + audioFilePath + @"'
-
-model = whisper.load_model('" + modelName + @"')
-result = model.transcribe(audio_file, word_timestamps=True" + languageParam + @")
-
-for seg in result['segments']:
-    start = seg['start']
-    end = seg['end']
-    text = seg['text'].strip()
-    start_str = format_time(start)
-    end_str = format_time(end)
-    print(f'[{start_str} - {end_str}] {text}', flush=True)
-";
+            if (_scriptContent == null)
+            {
+                var assembly = Assembly.GetExecutingAssembly();
+        
+                // Get all resource names for debugging
+                var resourceNames = assembly.GetManifestResourceNames();
+        
+                // Find the Python script resource
+                var resourceName = resourceNames.FirstOrDefault(r => r.EndsWith("whisper_transcribe.py"));
+        
+                if (resourceName == null)
+                {
+                    var availableResources = string.Join(", ", resourceNames);
+                    throw new Exception($"Embedded script not found. Available resources: {availableResources}");
+                }
+        
+                using (var stream = assembly.GetManifestResourceStream(resourceName))
+                {
+                    if (stream == null)
+                        throw new Exception("Could not load embedded script: " + resourceName);
+            
+                    using (var reader = new StreamReader(stream))
+                    {
+                        _scriptContent = reader.ReadToEnd();
+                    }
+                }
+            }
+    
+            var scriptPath = Path.GetTempFileName() + ".py";
+            File.WriteAllText(scriptPath, _scriptContent);
+            return scriptPath;
         }
+        
+        public static async Task<WhisperResult> RunWhisperScript(
+            string pythonCmd, 
+            string scriptPath, 
+            string audioFilePath, 
+            string modelName, 
+            string languageCode,
+            Action<string>? onProgress = null)
+        {
+            var arguments = $"\"{scriptPath}\" \"{audioFilePath}\" \"{modelName}\" \"{languageCode}\"";
+            
+            var process = new Process();
+            process.StartInfo.FileName = pythonCmd;
+            process.StartInfo.Arguments = arguments;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.CreateNoWindow = true;
+            
+            var output = new StringBuilder();
+            var error = new StringBuilder();
+            
+            process.OutputDataReceived += (sender, args) =>
+            {
+                if (!string.IsNullOrEmpty(args.Data))
+                {
+                    output.AppendLine(args.Data);
+                    onProgress?.Invoke(args.Data);
+                }
+            };
+            
+            process.ErrorDataReceived += (sender, args) =>
+            {
+                if (!string.IsNullOrEmpty(args.Data))
+                {
+                    error.AppendLine(args.Data);
+                    onProgress?.Invoke(args.Data);
+                }
+            };
+            
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            
+            await process.WaitForExitAsync();
+            
+            return new WhisperResult
+            {
+                Output = output.ToString(),
+                Error = error.ToString(),
+                ExitCode = process.ExitCode
+            };
+        }
+    }
+    
+    public class WhisperResult
+    {
+        public string Output { get; set; } = string.Empty;
+        public string Error { get; set; } = string.Empty;
+        public int ExitCode { get; set; }
     }
 }

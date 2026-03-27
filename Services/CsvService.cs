@@ -15,27 +15,45 @@ namespace VO_Tool.Services
             
             var sb = new StringBuilder();
             
-            // Write header
-            sb.AppendLine("Start (s),End (s),Duration (s),Transcribed Text,Expected Text,Audio File Name,Similarity,Source Audio File");
+            // Write header with new order
+            sb.AppendLine("Source Audio File,Start,End,Audio File Name,Expected Text,Transcribed Text,Similarity");
             
             foreach (var match in validMatches)
             {
                 var segment = match.Segment!;
-                double duration = segment.End - segment.Start;
+                
+                // Format times with milliseconds
+                string startTime = FormatTime(segment.Start);
+                string endTime = FormatTime(segment.End);
                 
                 // Escape quotes in text fields
-                string transcribed = segment.Text.Replace("\"", "\"\"");
-                string expected = match.ExpectedText.Replace("\"", "\"\"");
-                string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
                 string sourceAudioFile = Path.GetFileName(segment.SourceAudioFile).Replace("\"", "\"\"");
+                string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
+                string expected = match.ExpectedText.Replace("\"", "\"\"");
+                string transcribed = segment.Text.Replace("\"", "\"\"");
                 
-                sb.AppendLine($"{segment.Start:F2},{segment.End:F2},{duration:F2},\"{transcribed}\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},\"{sourceAudioFile}\"");
+                sb.AppendLine($"\"{sourceAudioFile}\",{startTime},{endTime},\"{audioFileName}\",\"{expected}\",\"{transcribed}\",{match.Similarity:F4}");
             }
             
             return sb.ToString();
         }
         
-        // Save CSV data to file in the same folder structure as logs
+        // Format time in seconds to MM:SS.mmm or HH:MM:SS.mmm format
+        private static string FormatTime(double seconds)
+        {
+            var ts = TimeSpan.FromSeconds(seconds);
+            
+            if (ts.TotalHours >= 1)
+            {
+                return $"{ts.Hours:D2}:{ts.Minutes:D2}:{ts.Seconds:D2}.{ts.Milliseconds:D3}";
+            }
+            else
+            {
+                return $"{ts.Minutes:D2}:{ts.Seconds:D2}.{ts.Milliseconds:D3}";
+            }
+        }
+        
+        // Save CSV data to file
         public static void SaveCsvData(string csvData, string outputFolder, string modelName, string languageName, string timestamp = null)
         {
             if (string.IsNullOrEmpty(csvData))
@@ -48,7 +66,7 @@ namespace VO_Tool.Services
             // Create the folder if it doesn't exist
             Directory.CreateDirectory(logFolder);
             
-            // Put CSV file inside the same folder as the log
+            // Put CSV file inside the folder
             var csvPath = Path.Combine(logFolder, $"matches_{timestamp}.csv");
             
             File.WriteAllText(csvPath, csvData, Encoding.UTF8);
@@ -72,28 +90,30 @@ namespace VO_Tool.Services
             var sb = new StringBuilder();
             
             // Write header
-            sb.AppendLine("Start (s),End (s),Duration (s),Transcribed Text,Expected Text,Audio File Name,Similarity,Is Match,Source Audio File");
+            sb.AppendLine("Source Audio File,Start,End,Audio File Name,Expected Text,Transcribed Text,Similarity,Is Match");
             
             foreach (var match in matches)
             {
                 if (match.Segment != null)
                 {
-                    double duration = match.Segment.End - match.Segment.Start;
+                    // Format times with milliseconds
+                    string startTime = FormatTime(match.Segment.Start);
+                    string endTime = FormatTime(match.Segment.End);
                     
                     // Escape quotes in text fields
-                    string transcribed = match.Segment.Text.Replace("\"", "\"\"");
-                    string expected = match.ExpectedText.Replace("\"", "\"\"");
-                    string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
                     string sourceAudioFile = Path.GetFileName(match.Segment.SourceAudioFile).Replace("\"", "\"\"");
+                    string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
+                    string expected = match.ExpectedText.Replace("\"", "\"\"");
+                    string transcribed = match.Segment.Text.Replace("\"", "\"\"");
                     
-                    sb.AppendLine($"{match.Segment.Start:F2},{match.Segment.End:F2},{duration:F2},\"{transcribed}\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch},\"{sourceAudioFile}\"");
+                    sb.AppendLine($"\"{sourceAudioFile}\",{startTime},{endTime},\"{audioFileName}\",\"{expected}\",\"{transcribed}\",{match.Similarity:F4},{match.IsMatch}");
                 }
                 else
                 {
                     string expected = match.ExpectedText.Replace("\"", "\"\"");
                     string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
                     
-                    sb.AppendLine($",,,,\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch},");
+                    sb.AppendLine($",,,,\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch}");
                 }
             }
             

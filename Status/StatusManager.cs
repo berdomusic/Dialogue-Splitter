@@ -66,5 +66,10 @@ namespace VO_Tool.Status
         {
             LogService.SaveLogToFile(outputFolder, audioFile, excelFile, textColumn, audioColumn, model, language);
         }
+        
+        public List<string> GetLogMessages()
+        {
+            return LogService.GetMessages();
+        }
     }
 }

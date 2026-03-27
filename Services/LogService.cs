@@ -9,6 +9,11 @@
             _logMessages.Add($"{DateTime.Now:HH:mm:ss.fff} - {message}");
         }
         
+        public static List<string> GetMessages()
+        {
+            return new List<string>(_logMessages);
+        }
+        
         public static void ClearMessages()
         {
             _logMessages.Clear();

@@ -182,32 +182,50 @@ namespace VO_Tool.UI
                 
                 StatusManager.UpdateStatus("=== PROCESS COMPLETE ===");
                 
-                // Create folder if any output is enabled
+               // Create folder if any output is enabled
                 bool shouldCreateFolder = ChkCreateLogFile.Checked || ChkCreateCsvFile.Checked;
-                
+
                 if (shouldCreateFolder)
                 {
                     var folderName = $"log_{timestamp}_{modelName}_{languageName}";
                     var outputFolder = Path.Combine(OutputFolderSelector.FolderPath, folderName);
                     Directory.CreateDirectory(outputFolder);
                     
-                    // Log - save to file if checkbox is checked
+                    // Save log file directly in the folder (not creating another subfolder)
                     if (ChkCreateLogFile.Checked)
                     {
-                        StatusManager.SaveLogToFile(
-                            outputFolder,
-                            AudioSelector.FilePath,
-                            ExcelSelector.FilePath,
-                            Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty,
-                            Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty,
-                            selectedModel,
-                            selectedLanguage
-                        );
+                        var logPath = Path.Combine(outputFolder, $"split_log_{timestamp}_{modelName}_{languageName}.txt");
+                        
+                        // Get all log messages from StatusManager
+                        var logMessages = StatusManager.GetLogMessages(); // You'll need to expose this from StatusManager
+                        
+                        using (var writer = new StreamWriter(logPath))
+                        {
+                            writer.WriteLine("=== VO Audio Splitter Log ===");
+                            writer.WriteLine($"Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                            writer.WriteLine($"Audio file: {AudioSelector.FilePath}");
+                            writer.WriteLine($"Excel file: {ExcelSelector.FilePath}");
+                            writer.WriteLine($"Text column: {Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty}");
+                            writer.WriteLine($"Audio file name column: {Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty}");
+                            writer.WriteLine($"Whisper model: {modelName}");
+                            writer.WriteLine($"Language: {languageName}");
+                            writer.WriteLine();
+                            writer.WriteLine("=== All Status Messages ===");
+                            
+                            foreach (var msg in logMessages)
+                            {
+                                writer.WriteLine(msg);
+                            }
+                            
+                            writer.WriteLine();
+                            writer.WriteLine("=== End of Log ===");
+                        }
+                        
                         StatusManager.UpdateStatus($"Log file saved to output folder");
                         await Task.Delay(500);
                     }
                     
-                    // CSV - save to file only if checkbox is checked
+                    // Save CSV file in the same folder
                     if (ChkCreateCsvFile.Checked && !string.IsNullOrEmpty(csvData))
                     {
                         var csvPath = Path.Combine(outputFolder, $"matches_{timestamp}.csv");

@@ -15,7 +15,7 @@ namespace VO_Tool.Settings
         public WhisperModel LastModel { get; set; } = WhisperModel.Base;
         public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
         public bool CreateLogFile { get; set; } = true;
-        public bool CreateCsvFile { get; set; }
+        public bool CreateCsvFile { get; set; } = true;
         
         public void UpdateFromUI(UIControls ui)
         {

@@ -51,10 +51,15 @@
             // Status bar
             toolTip.SetToolTip(ui.StatusManager.GetStatusLabel(), "Current operation status");
             
-            toolTip.SetToolTip(ui.Tb_SimilarityThreshold, "Controls how aggressive Whisper merges words into segments.\n" +
-                                                          "Lower = more segments (splits more easily)\n" +
-                                                          "Higher = fewer segments (groups words together)\n" +
-                                                          "Recommended: 0.3-0.7 (default: 0.75)");
+            toolTip.SetToolTip(ui.Tb_SimilarityThreshold, 
+                "Minimum similarity score required to consider a transcribed segment a match to the expected text.\n\n" +
+                "Lower = more matches (may include incorrect matches)\n" +
+                "Higher = fewer matches (only exact or very close matches)\n\n" +
+                "How similarity is calculated:\n" +
+                "• 100% - Exact match\n" +
+                "• 95% - Contains the text\n" +
+                "• 70-90% - Levenshtein ratio + word overlap\n\n" +
+                "Recommended: 70-85% ");
         }
     }
 }

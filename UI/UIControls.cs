@@ -92,6 +92,8 @@ namespace VO_Tool.UI
                 DisableControls(BtnProcess);
                 StatusManager.UpdateStatus("=== PROCESS START ===");
                 
+                var startTime = DateTime.Now;
+                
                 double similarityThreshold = WhisperService.GetSimilarityThreshold(Tb_SimilarityThreshold);
                 StatusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
                 await Task.Delay(500);
@@ -133,6 +135,48 @@ namespace VO_Tool.UI
                 StatusManager.UpdateStatus($"Transcription complete. Found {segments.Count} speech segments");
                 await Task.Delay(500);
                 
+                // Matching text
+                StatusManager.UpdateStatus("Matching transcribed segments to Excel texts...");
+                var matches = TextMatchingService.MatchSegmentsToTexts(
+                    segments, texts, audioFileNames, similarityThreshold);
+
+                int matchedCount = matches.Count(m => m.IsMatch);
+                int totalTexts = texts.Count;
+                int totalSegments = segments.Count;
+
+                StatusManager.UpdateStatus($"Matched {matchedCount} of {totalTexts} texts (Segments: {totalSegments})");
+                
+                // Show match summary
+                StatusManager.UpdateStatus("=== MATCH SUMMARY ===");
+
+                try
+                {
+                    foreach (var match in matches)
+                    {
+                        if (match.Segment != null)
+                        {
+                            string status = match.IsMatch ? "✓" : "✗";
+                            StatusManager.UpdateStatus($"{status} [{match.Segment.Start:F1}s - {match.Segment.End:F1}s] '{match.Segment.Text}' -> '{match.ExpectedText}' ({match.Similarity:P0})");
+                        }
+                        else
+                        {
+                            StatusManager.UpdateStatus($"✗ MISSING: Text '{match.ExpectedText}' had no matching segment");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    StatusManager.UpdateStatus($"ERROR in match summary: {ex.Message}");
+                }
+                await Task.Delay(500);
+                
+                var endTime = DateTime.Now;
+                var totalSeconds = (endTime - startTime).TotalSeconds;
+                StatusManager.UpdateStatus($"Total processing time: {totalSeconds:F1} seconds");
+                
+                StatusManager.UpdateStatus("=== PROCESS COMPLETE ===");
+                
+                // Log
                 if (ChkCreateLogFile.Checked)
                 {
                     StatusManager.SaveLogToFile(
@@ -148,7 +192,13 @@ namespace VO_Tool.UI
                     await Task.Delay(500);
                 }
                 
-                StatusManager.UpdateStatus("=== PROCESS COMPLETE ===");
+                // CSV
+                if (ChkCreateCsvFile.Checked)
+                {
+                    TextMatchingService.SaveMatchesToCsv(matches, OutputFolderSelector.FolderPath);
+                    StatusManager.UpdateStatus($"Match report CSV saved to output folder");
+                    await Task.Delay(500);
+                }
                 
                 UIHelpers.ShowSuccess(
                     $"Successfully processed:\n" +

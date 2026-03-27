@@ -16,8 +16,8 @@ namespace VO_Tool.Settings
         public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
         public bool CreateLogFile { get; set; } = true;
         public bool CreateCsvFile { get; set; } = true;
-        public double StartPaddingSeconds { get; set; } = -.1;
-        public double EndPaddingSeconds { get; set; } = .1;
+        public double StartPaddingSeconds { get; set; } = 0;
+        public double EndPaddingSeconds { get; set; } = .2;
         
         public void UpdateFromUI(UIControls ui)
         {

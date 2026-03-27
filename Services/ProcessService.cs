@@ -18,6 +18,7 @@ namespace VO_Tool.Services
         private readonly ComboBox _cmbLanguage;
         private readonly CheckBox _chkCreateLogFile;
         private readonly CheckBox _chkCreateCsvFile;
+        private readonly CheckBox _chkSplitAudio;
         private readonly NumericUpDown _nudStartPadding;
         private readonly NumericUpDown _nudEndPadding;
         
@@ -34,6 +35,7 @@ namespace VO_Tool.Services
             ComboBox cmbLanguage,
             CheckBox chkCreateLogFile,
             CheckBox chkCreateCsvFile,
+            CheckBox chkSplitAudio,
             NumericUpDown nudStartPadding,
             NumericUpDown nudEndPadding)
         {
@@ -49,6 +51,7 @@ namespace VO_Tool.Services
             _cmbLanguage = cmbLanguage;
             _chkCreateLogFile = chkCreateLogFile;
             _chkCreateCsvFile = chkCreateCsvFile;
+            _chkSplitAudio = chkSplitAudio;
             _nudStartPadding = nudStartPadding;
             _nudEndPadding = nudEndPadding;
         }
@@ -152,13 +155,49 @@ namespace VO_Tool.Services
             _statusManager.UpdateStatus("=== PROCESS COMPLETE ===");
             
             // Create folder if any output is enabled
-            bool shouldCreateFolder = _chkCreateLogFile.Checked || _chkCreateCsvFile.Checked;
+            bool shouldCreateFolder = _chkCreateLogFile.Checked || _chkCreateCsvFile.Checked || _chkSplitAudio.Checked;
 
             if (shouldCreateFolder)
             {
                 var folderName = $"log_{timestamp}_{modelName}_{languageName}";
                 var outputFolder = Path.Combine(_outputFolderSelector.FolderPath, folderName);
                 Directory.CreateDirectory(outputFolder);
+                
+                string csvPath = null;
+                
+                // Save CSV file temporarily
+                if (!string.IsNullOrEmpty(csvData))
+                {
+                    csvPath = Path.Combine(outputFolder, $"matches_{timestamp}.csv");
+                    File.WriteAllText(csvPath, csvData, System.Text.Encoding.UTF8);
+                    
+                    if (_chkCreateCsvFile.Checked)
+                    {
+                        _statusManager.UpdateStatus($"Match report CSV saved to output folder");
+                    }
+                    else
+                    {
+                        _statusManager.UpdateStatus($"Temporary CSV created", false);
+                    }
+                    await Task.Delay(500);
+                }
+                
+                // Split audio if checkbox is checked
+                if (_chkSplitAudio.Checked && !string.IsNullOrEmpty(csvData) && csvPath != null && File.Exists(csvPath))
+                {
+                    var splitter = new AudioSplitterService();
+                    await splitter.SplitAudioFromCsv(csvPath, _audioSelector.FilePath, outputFolder, _statusManager);
+                    _statusManager.UpdateStatus($"Audio split completed. Files saved to Media folder");
+                    await Task.Delay(500);
+                }
+                
+                // Delete temporary CSV if user didn't want it
+                if (!_chkCreateCsvFile.Checked && csvPath != null && File.Exists(csvPath))
+                {
+                    File.Delete(csvPath);
+                    _statusManager.UpdateStatus($"Temporary CSV deleted", false);
+                    await Task.Delay(500);
+                }
                 
                 // Save log file
                 if (_chkCreateLogFile.Checked)
@@ -189,15 +228,6 @@ namespace VO_Tool.Services
                     }
                     
                     _statusManager.UpdateStatus($"Log file saved to output folder");
-                    await Task.Delay(500);
-                }
-                
-                // Save CSV file
-                if (_chkCreateCsvFile.Checked && !string.IsNullOrEmpty(csvData))
-                {
-                    var csvPath = Path.Combine(outputFolder, $"matches_{timestamp}.csv");
-                    File.WriteAllText(csvPath, csvData, System.Text.Encoding.UTF8);
-                    _statusManager.UpdateStatus($"Match report CSV saved to output folder");
                     await Task.Delay(500);
                 }
             }

@@ -131,7 +131,7 @@ namespace VO_Tool.UI
             
             // Add log file checkbox with save callback
             ui.ChkCreateLogFile = builder.AddCheckBox(
-                "Create log file in output folder", 
+                "Create log file", 
                 20, 
                 settings.CreateLogFile,
                 onCheckedChanged: (s, e) => SaveSettings());
@@ -141,6 +141,12 @@ namespace VO_Tool.UI
                 "Create CSV file", 
                 20, 
                 settings.CreateCsvFile,
+                onCheckedChanged: (s, e) => SaveSettings());
+            
+            ui.ChkSplitAudio = builder.AddCheckBox(
+                "Split audio files", 
+                20, 
+                settings.SplitAudio,
                 onCheckedChanged: (s, e) => SaveSettings());
             
             // Start padding - can be negative (cut from beginning)

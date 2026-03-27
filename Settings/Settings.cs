@@ -18,6 +18,7 @@ namespace VO_Tool.Settings
         public bool CreateCsvFile { get; set; } = true;
         public double StartPaddingSeconds { get; set; } = 0;
         public double EndPaddingSeconds { get; set; } = .2;
+        public bool SplitAudio { get; set; } = false;
         
         public void UpdateFromUI(UIControls ui)
         {
@@ -29,6 +30,7 @@ namespace VO_Tool.Settings
             LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
             CreateLogFile = ui.ChkCreateLogFile.Checked;
             CreateCsvFile = ui.ChkCreateCsvFile.Checked;
+            SplitAudio = ui.ChkSplitAudio.Checked;
             StartPaddingSeconds = (double)ui.NudStartPadding.Value;
             EndPaddingSeconds = (double)ui.NudEndPadding.Value;
             

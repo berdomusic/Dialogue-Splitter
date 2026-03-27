@@ -24,6 +24,7 @@ namespace VO_Tool.UI
         public Label Lbl_Language { get; set; }
         public CheckBox ChkCreateLogFile { get; set; }
         public CheckBox ChkCreateCsvFile { get; set; }
+        public CheckBox ChkSplitAudio { get; set; }
         public NumericUpDown NudStartPadding { get; set; }
         public NumericUpDown NudEndPadding { get; set; }
         public Label LblStartPadding { get; set; }
@@ -88,13 +89,13 @@ namespace VO_Tool.UI
                 UIHelpers.ShowError(errorMessage);
                 return;
             }
-    
+
             try
             {
                 StatusManager.ClearLog();
                 DisableControls(BtnProcess);
                 StatusManager.UpdateStatus("=== PROCESS START ===");
-        
+
                 var processService = new ProcessService(
                     ExcelService,
                     StatusManager,
@@ -108,9 +109,10 @@ namespace VO_Tool.UI
                     Cmb_Language,
                     ChkCreateLogFile,
                     ChkCreateCsvFile,
+                    ChkSplitAudio,  // Add this line
                     NudStartPadding,
                     NudEndPadding);
-        
+
                 await processService.ProcessAsync();
             }
             catch (Exception ex)

@@ -37,10 +37,7 @@ namespace VO_Tool.Services
             
                     if (process.ExitCode == 0)
                     {
-                        if (IsWhisperInstalled(cmd))
-                        {
-                            return cmd;
-                        }
+                        return cmd;
                     }
                 }
                 catch { }

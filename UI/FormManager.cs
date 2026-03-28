@@ -8,7 +8,7 @@ namespace VO_Tool.UI
     {
         private readonly UIControls ui = new UIControls();
         private readonly AppSettings settings;
-        private bool _isInitializing = true;
+        private readonly bool isInitializing = true;
         
         public FormManager(Main form)
         {
@@ -22,7 +22,7 @@ namespace VO_Tool.UI
             
             builder.SetFormSize(600, 700);
             builder.CenterForm();
-            form.Text = "Audio Splitter - Speech to Text";
+            form.Text = "Dialogue Splitter";
 
             // Add Excel file selector (without callback yet)
             (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
@@ -217,12 +217,12 @@ namespace VO_Tool.UI
             }
             
             // Initialization complete
-            _isInitializing = false;
+            isInitializing = false;
         }
         
         private void SaveSettings()
         {
-            if (_isInitializing) return;
+            if (isInitializing) return;
             settings.UpdateFromUI(ui);
             Settings.Settings.Save();
         }

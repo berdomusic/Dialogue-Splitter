@@ -151,14 +151,14 @@ namespace VO_Tool.UI
             
             // Start padding - can be negative (cut from beginning)
             (ui.LblStartPadding, ui.NudStartPadding) = builder.AddNumericUpDown(
-                "Start Padding (s):", 
+                "Start Padding:", 
                 (decimal)settings.StartPaddingSeconds, 
                 -2, 2, 0.05m, 20,
                 (s, e) => SaveSettings());
 
             // End padding - can be negative (cut from end)
             (ui.LblEndPadding, ui.NudEndPadding) = builder.AddNumericUpDown(
-                "End Padding (s):", 
+                "End Padding:", 
                 (decimal)settings.EndPaddingSeconds, 
                 -2, 2, 0.05m, 20,
                 (s, e) => SaveSettings());

@@ -31,7 +31,9 @@ Email: kontakt@berdo-music.pl
    - IMPORTANT: Check "Add Python to PATH" during installation
 
 2. **Install Whisper**
+   ```cmd
    py -m pip install openai-whisper
+   ```
 
 3. **PyTorch (CPU version - included with Whisper)**
    - Whisper installs CPU version automatically

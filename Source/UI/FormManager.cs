@@ -24,6 +24,8 @@ namespace VO_Tool.UI
             builder.SetFormSize(600, 700);
             builder.CenterForm();
             form.Text = "Dialogue Splitter";
+            
+            builder.AddMenuStrip();
 
             // Add Excel file selector (without callback yet)
             (ui.LblExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");

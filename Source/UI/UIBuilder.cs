@@ -411,6 +411,29 @@ namespace VO_tool.UI
             return (label, numericUpDown);
         }
         
+        public MenuStrip AddMenuStrip()
+        {
+            var menuStrip = new MenuStrip();
+    
+            var aboutParent = new ToolStripMenuItem("About");
+            var aboutItem = new ToolStripMenuItem("About");
+            aboutItem.Click += (s, e) =>
+            {
+                using var aboutDialog = new AboutDialog();
+                aboutDialog.ShowDialog(form);
+            };
+            aboutParent.DropDownItems.Add(aboutItem);
+    
+            menuStrip.Items.Add(aboutParent);
+            form.Controls.Add(menuStrip);
+            form.MainMenuStrip = menuStrip;
+    
+            // Adjust starting Y position to account for menu
+            currentY += 25;
+    
+            return menuStrip;
+        }
+        
         public void SetupFileDrop(Control control, 
             Action<string> onExcelFile, 
             Action<string> onAudioFile,

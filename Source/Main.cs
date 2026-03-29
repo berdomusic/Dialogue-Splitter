@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using VO_Tool.UI;
 
 namespace VO_Tool

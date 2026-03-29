@@ -1,6 +1,5 @@
-# VO Tool - Audio Splitter & Speech-to-Text
-
-A Windows application that uses OpenAI's Whisper to transcribe audio and match segments against expected text from Excel files. Perfect for voice-over work, audio quality assurance, and batch audio processing.
+# Dialogue Splitter
+A Windows application that uses OpenAI's Whisper to transcribe audio and match segments against expected text from Excel files.
 
 ## Support
 

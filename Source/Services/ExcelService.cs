@@ -9,7 +9,7 @@ namespace VO_Tool.Services
     {
         public ExcelService()
         {
-            ExcelPackage.License.SetNonCommercialPersonal("VO_Tool - Audio Splitter Tool");
+            ExcelPackage.License.SetNonCommercialPersonal("Dialogue Splitter");
         }
         
         public Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)

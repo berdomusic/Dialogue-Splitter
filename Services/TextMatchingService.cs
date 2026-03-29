@@ -4,17 +4,17 @@ namespace VO_Tool.Services
 {
     public class MatchResult
     {
-        public WhisperSegment? Segment { get; set; }
-        public string ExpectedText { get; set; } = string.Empty;
-        public string AudioFileName { get; set; } = string.Empty;
-        public double Similarity { get; set; }
-        public bool IsMatch { get; set; }
+        public WhisperSegment? Segment { get; init; }
+        public string ExpectedText { get; init; } = string.Empty;
+        public string AudioFileName { get; init; } = string.Empty;
+        public double Similarity { get; init; }
+        public bool IsMatch { get; init; }
     }
 
     public static class TextMatchingService
     {
         // Calculate similarity between transcribed text and expected text
-        public static double CalculateSimilarity(string transcribed, string expected)
+        private static double CalculateSimilarity(string transcribed, string expected)
         {
             if (string.IsNullOrEmpty(transcribed) || string.IsNullOrEmpty(expected))
                 return 0;
@@ -125,29 +125,27 @@ namespace VO_Tool.Services
         public static void SaveMatchesToCsv(List<MatchResult> matches, string outputFolder)
         {
             var csvPath = Path.Combine(outputFolder, $"match_report_{DateTime.Now:yyyyMMdd_HHmmss}.csv");
-            
-            using (var writer = new StreamWriter(csvPath, false, Encoding.UTF8))
-            {
-                writer.WriteLine("Start (s),End (s),Transcribed Text,Expected Text,Audio File Name,Similarity,Is Match");
+
+            using var writer = new StreamWriter(csvPath, false, Encoding.UTF8);
+            writer.WriteLine("Start (s),End (s),Transcribed Text,Expected Text,Audio File Name,Similarity,Is Match");
                 
-                foreach (var match in matches)
+            foreach (var match in matches)
+            {
+                if (match.Segment != null)
                 {
-                    if (match.Segment != null)
-                    {
-                        // Escape quotes in text fields
-                        string transcribed = match.Segment.Text.Replace("\"", "\"\"");
-                        string expected = match.ExpectedText.Replace("\"", "\"\"");
-                        string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
+                    // Escape quotes in text fields
+                    string transcribed = match.Segment.Text.Replace("\"", "\"\"");
+                    string expected = match.ExpectedText.Replace("\"", "\"\"");
+                    string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
                         
-                        writer.WriteLine($"{match.Segment.Start:F2},{match.Segment.End:F2},\"{transcribed}\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch}");
-                    }
-                    else
-                    {
-                        string expected = match.ExpectedText.Replace("\"", "\"\"");
-                        string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
+                    writer.WriteLine($"{match.Segment.Start:F2},{match.Segment.End:F2},\"{transcribed}\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch}");
+                }
+                else
+                {
+                    string expected = match.ExpectedText.Replace("\"", "\"\"");
+                    string audioFileName = match.AudioFileName.Replace("\"", "\"\"");
                         
-                        writer.WriteLine($",,\"NO_SEGMENT\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch}");
-                    }
+                    writer.WriteLine($",,\"NO_SEGMENT\",\"{expected}\",\"{audioFileName}\",{match.Similarity:F4},{match.IsMatch}");
                 }
             }
         }

@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
-
-namespace VO_Tool.Services
+﻿namespace VO_Tool.Services
 {
     public static class WhisperService
     {

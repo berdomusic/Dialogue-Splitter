@@ -35,7 +35,7 @@
             
             using (var writer = new StreamWriter(logPath))
             {
-                writer.WriteLine("=== VO Audio Splitter Log ===");
+                writer.WriteLine("=== Dialogue Splitter Log ===");
                 writer.WriteLine($"Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
                 writer.WriteLine($"Audio file: {audioFile}");
                 writer.WriteLine($"Excel file: {excelFile}");

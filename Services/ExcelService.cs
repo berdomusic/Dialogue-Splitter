@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using VO_Tool.Status;
+using VO_tool.UI;
 using VO_Tool.UI;
 
 namespace VO_Tool.Services
@@ -11,7 +12,7 @@ namespace VO_Tool.Services
             ExcelPackage.License.SetNonCommercialPersonal("VO_Tool - Audio Splitter Tool");
         }
         
-        public async Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)
+        public Task<List<string>> GetColumnLettersWithDataAsync(string excelPath)
         {
             var columnLetters = new List<string>();
             
@@ -22,7 +23,7 @@ namespace VO_Tool.Services
                 
                 if (dimension == null)
                 {
-                    return columnLetters;
+                    return Task.FromResult(columnLetters);
                 }
                 
                 for (int col = dimension.Start.Column; col <= dimension.End.Column; col++)
@@ -46,12 +47,12 @@ namespace VO_Tool.Services
                 }
             }
             
-            return columnLetters;
+            return Task.FromResult(columnLetters);
         }
         
         public async Task LoadExcelColumnsAsync(string filePath, ComboBox textColumnCombo, ComboBox audioColumnCombo, StatusManager statusManager, Action<string, string>? onColumnsLoaded = null)
         {
-            if (!File.Exists(filePath) || !UIHelpers.IsExcelFile(filePath)) return;
+            if (!File.Exists(filePath) || !UiHelpers.IsExcelFile(filePath)) return;
             
             try
             {
@@ -65,8 +66,8 @@ namespace VO_Tool.Services
                     return;
                 }
                 
-                UIBuilder.PopulateComboBox(textColumnCombo, columnLetters);
-                UIBuilder.PopulateComboBox(audioColumnCombo, columnLetters);
+                UiBuilder.PopulateComboBox(textColumnCombo, columnLetters);
+                UiBuilder.PopulateComboBox(audioColumnCombo, columnLetters);
                 
                 textColumnCombo.Enabled = true;
                 audioColumnCombo.Enabled = true;
@@ -79,7 +80,7 @@ namespace VO_Tool.Services
             catch (Exception ex)
             {
                 statusManager.UpdateStatus($"Error loading Excel: {ex.Message}");
-                UIHelpers.ShowException($"Error loading Excel: {ex.Message}");
+                UiHelpers.ShowException($"Error loading Excel: {ex.Message}");
             }
         }
         
@@ -95,7 +96,7 @@ namespace VO_Tool.Services
             return result;
         }
         
-        public async Task<List<string>> ReadColumnByNumberAsync(string excelPath, int columnNumber)
+        public Task<List<string>> ReadColumnByNumberAsync(string excelPath, int columnNumber)
         {
             var texts = new List<string>();
             
@@ -114,7 +115,7 @@ namespace VO_Tool.Services
                     var cell = worksheet.Cells[row, columnNumber];
                     if (cell.Value != null && !string.IsNullOrWhiteSpace(cell.Value.ToString()))
                     {
-                        texts.Add(cell.Value.ToString().Trim());
+                        texts.Add(cell.Value.ToString()!.Trim());
                     }
                 }
             }
@@ -124,17 +125,17 @@ namespace VO_Tool.Services
                 throw new Exception($"No text found in column {GetColumnLetter(columnNumber)}.");
             }
             
-            return texts;
+            return Task.FromResult(texts);
         }
         
-        public async Task<int> GetColumnNumberFromLetter(string columnLetter)
+        public Task<int> GetColumnNumberFromLetter(string columnLetter)
         {
             int result = 0;
             foreach (char c in columnLetter.ToUpper())
             {
                 result = result * 26 + (c - 'A' + 1);
             }
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

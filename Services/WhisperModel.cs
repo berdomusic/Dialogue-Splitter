@@ -34,11 +34,11 @@
                 _ => "base"
             };
         }
-        
-        public static WhisperModel FromString(string modelName)
+
+        private static WhisperModel FromString(string modelName)
         {
             if (string.IsNullOrEmpty(modelName)) return WhisperModel.Base;
-            return ModelNameMap.TryGetValue(modelName, out var model) ? model : WhisperModel.Base;
+            return ModelNameMap.GetValueOrDefault(modelName, WhisperModel.Base);
         }
         
         public static List<WhisperModel> GetInstalledModels()

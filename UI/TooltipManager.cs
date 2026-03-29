@@ -14,36 +14,36 @@
             };
         }
         
-        public void SetupAllTooltips(UIControls ui)
+        public void SetupAllTooltips(UiControls ui)
         {
             // Excel file selector
-            toolTip.SetToolTip(ui.Lbl_ExcelFile, "Select an Excel file containing VO text and audio file names");
+            toolTip.SetToolTip(ui.LblExcelFile, "Select an Excel file containing VO text and audio file names");
             toolTip.SetToolTip(ui.ExcelSelector.GetTextBox(), "Select an Excel file containing VO text and audio file names");
             toolTip.SetToolTip(ui.ExcelSelector.GetBrowseButton(), "Browse for Excel file");
     
             // Audio file selector
-            toolTip.SetToolTip(ui.Lbl_AudioFile, "Select the source audio file (WAV, MP3, FLAC, M4A)");
+            toolTip.SetToolTip(ui.LblAudioFile, "Select the source audio file (WAV, MP3, FLAC, M4A)");
             toolTip.SetToolTip(ui.AudioSelector.GetTextBox(), "Select the source audio file (WAV, MP3, FLAC, M4A)");
             toolTip.SetToolTip(ui.AudioSelector.GetBrowseButton(), "Browse for audio file");
             
             // Output folder selector
-            toolTip.SetToolTip(ui.Lbl_OutputFolder, "Choose where to save the split audio files");
+            toolTip.SetToolTip(ui.LblOutputFolder, "Choose where to save the split audio files");
             toolTip.SetToolTip(ui.OutputFolderSelector.GetTextBox(), "Choose where to save the split audio files");
             toolTip.SetToolTip(ui.OutputFolderSelector.GetBrowseButton(), "Browse for output folder");
     
             // VO Text Column
-            toolTip.SetToolTip(ui.Lbl_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
-            toolTip.SetToolTip(ui.Cmb_VO_Text_Column, "Select the column letter (A, B, C, etc.) containing the spoken text");
+            toolTip.SetToolTip(ui.LblVoTextColumn, "Select the column letter (A, B, C, etc.) containing the spoken text");
+            toolTip.SetToolTip(ui.CmbVoTextColumn, "Select the column letter (A, B, C, etc.) containing the spoken text");
     
             // VO Audio File Name Column
-            toolTip.SetToolTip(ui.Lbl_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
-            toolTip.SetToolTip(ui.Cmb_VO_Audio_Column, "Select the column letter (A, B, C, etc.) containing the output audio file names");
+            toolTip.SetToolTip(ui.LblVoAudioColumn, "Select the column letter (A, B, C, etc.) containing the output audio file names");
+            toolTip.SetToolTip(ui.CmbVoAudioColumn, "Select the column letter (A, B, C, etc.) containing the output audio file names");
             
-            toolTip.SetToolTip(ui.Lbl_Model, "Select installed Whisper model");
-            toolTip.SetToolTip(ui.Cmb_Model, "Select installed Whisper model");
+            toolTip.SetToolTip(ui.LblModel, "Select installed Whisper model");
+            toolTip.SetToolTip(ui.CmbModel, "Select installed Whisper model");
             
-            toolTip.SetToolTip(ui.Lbl_Language, "Select the language of the audio for better accuracy");
-            toolTip.SetToolTip(ui.Cmb_Language, "Select the language of the audio for better accuracy");
+            toolTip.SetToolTip(ui.LblLanguage, "Select the language of the audio for better accuracy");
+            toolTip.SetToolTip(ui.CmbLanguage, "Select the language of the audio for better accuracy");
     
             // Process button
             toolTip.SetToolTip(ui.BtnProcess, "Start processing: load Excel data");
@@ -51,7 +51,7 @@
             // Status bar
             toolTip.SetToolTip(ui.StatusManager.GetStatusLabel(), "Current operation status");
             
-            toolTip.SetToolTip(ui.Tb_SimilarityThreshold, 
+            toolTip.SetToolTip(ui.TbSimilarityThreshold, 
                 "Minimum similarity score required to consider a transcribed segment a match to the expected text.\n\n" +
                 "Lower = more matches (may include incorrect matches)\n" +
                 "Higher = fewer matches (only exact or very close matches)\n\n" +

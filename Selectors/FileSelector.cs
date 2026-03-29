@@ -24,22 +24,22 @@
             label = new Label
             {
                 Text = labelText,
-                Location = new System.Drawing.Point(x, y),
-                Size = new System.Drawing.Size(100, 25)
+                Location = new Point(x, y),
+                Size = new Size(100, 25)
             };
             
             txtFilePath = new TextBox
             {
-                Location = new System.Drawing.Point(x + 100, y - 3),
-                Size = new System.Drawing.Size(330, 23),
+                Location = new Point(x + 100, y - 3),
+                Size = new Size(330, 23),
                 ReadOnly = true
             };
             
             btnBrowse = new Button
             {
                 Text = "Browse...",
-                Location = new System.Drawing.Point(x + 440, y - 3),
-                Size = new System.Drawing.Size(100, 30)
+                Location = new Point(x + 440, y - 3),
+                Size = new Size(100, 30)
             };
             
             btnBrowse.Click += (s, e) => Browse_Click(s, e);
@@ -73,11 +73,6 @@
             form.Controls.Add(label);
             form.Controls.Add(txtFilePath);
             form.Controls.Add(btnBrowse);
-        }
-        
-        public void Clear()
-        {
-            txtFilePath.Clear();
         }
     }
 }

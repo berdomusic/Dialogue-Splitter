@@ -2,10 +2,10 @@
 
 namespace VO_Tool.UI
 {
-    public static class UIHelpers
+    public static class UiHelpers
     {
         // ============ Validation ============
-        public static bool ValidateInputs(UIControls ui, out string errorMessage)
+        public static bool ValidateInputs(UiControls ui, out string errorMessage)
         {
             errorMessage = string.Empty;
 
@@ -39,13 +39,13 @@ namespace VO_Tool.UI
                 return false;
             }
 
-            if (ui.Cmb_VO_Text_Column.SelectedItem == null)
+            if (ui.CmbVoTextColumn.SelectedItem == null)
             {
                 errorMessage = "Please select a VO text column.";
                 return false;
             }
 
-            if (ui.Cmb_VO_Audio_Column.SelectedItem == null)
+            if (ui.CmbVoAudioColumn.SelectedItem == null)
             {
                 errorMessage = "Please select a VO audio file name column.";
                 return false;

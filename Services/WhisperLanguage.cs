@@ -128,7 +128,7 @@
         
         public static string ToLanguageCode(this WhisperLanguage language)
         {
-            return LanguageCodeMap.TryGetValue(language, out var code) ? code : "auto";
+            return LanguageCodeMap.GetValueOrDefault(language, "auto");
         }
         
         public static WhisperLanguage FromLanguageCode(string languageCode)

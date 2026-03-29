@@ -19,8 +19,8 @@ namespace VO_Tool.Services
             {
                 var segment = match.Segment!;
         
-                double adjustedStart = Math.Max(0, segment.Start - startPadding);  // startPadding can be negative
-                double adjustedEnd = Math.Max(segment.End + endPadding, 0);       // endPadding can be negative
+                double adjustedStart = Math.Max(0, segment.Start - startPadding);
+                double adjustedEnd = Math.Max(segment.End + endPadding, 0);
         
                 string startTime = FormatTime(adjustedStart);
                 string endTime = FormatTime(adjustedEnd);

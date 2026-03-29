@@ -6,10 +6,10 @@ namespace VO_Tool.Services
 {
     public class WhisperSegment
     {
-        public double Start { get; set; }
-        public double End { get; set; }
-        public string Text { get; set; } = string.Empty;
-        public string SourceAudioFile { get; set; } = string.Empty; 
+        public double Start { get; init; }
+        public double End { get; init; }
+        public string Text { get; init; } = string.Empty;
+        public string SourceAudioFile { get; init; } = string.Empty; 
     }
     
     public static class WhisperServiceHelper
@@ -87,17 +87,13 @@ namespace VO_Tool.Services
                     var availableResources = string.Join(", ", resourceNames);
                     throw new Exception($"Embedded script not found. Available resources: {availableResources}");
                 }
-        
-                using (var stream = assembly.GetManifestResourceStream(resourceName))
-                {
-                    if (stream == null)
-                        throw new Exception("Could not load embedded script: " + resourceName);
-            
-                    using (var reader = new StreamReader(stream))
-                    {
-                        _scriptContent = reader.ReadToEnd();
-                    }
-                }
+
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null)
+                    throw new Exception("Could not load embedded script: " + resourceName);
+
+                using var reader = new StreamReader(stream);
+                _scriptContent = reader.ReadToEnd();
             }
     
             var scriptPath = Path.GetTempFileName() + ".py";
@@ -161,8 +157,8 @@ namespace VO_Tool.Services
     
     public class WhisperResult
     {
-        public string Output { get; set; } = string.Empty;
-        public string Error { get; set; } = string.Empty;
-        public int ExitCode { get; set; }
+        public string Output { get; init; } = string.Empty;
+        public string Error { get; init; } = string.Empty;
+        public int ExitCode { get; init; }
     }
 }

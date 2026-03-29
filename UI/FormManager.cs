@@ -1,31 +1,32 @@
 ﻿using VO_Tool.Services;
-using VO_Tool.Status;
 using VO_Tool.Settings;
+using VO_tool.UI;
 
 namespace VO_Tool.UI
 {
     public class FormManager
     {
-        private readonly UIControls ui = new UIControls();
+        private readonly UiControls ui = new UiControls();
         private readonly AppSettings settings;
-        private readonly bool isInitializing = true;
+        private readonly bool isInitializing;
         
         public FormManager(Main form)
         {
+            isInitializing = true;
             // Load saved settings
             settings = VO_Tool.Settings.Settings.Get();
             
             ui.ExcelService = new ExcelService();
             ui.MainForm = form;
 
-            var builder = new UIBuilder(form);
+            var builder = new UiBuilder(form);
             
             builder.SetFormSize(600, 700);
             builder.CenterForm();
             form.Text = "Dialogue Splitter";
 
             // Add Excel file selector (without callback yet)
-            (ui.Lbl_ExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
+            (ui.LblExcelFile, ui.ExcelSelector) = builder.AddFileSelectorWithLabel("Excel File:", "Excel Files|*.xlsx;*.xls|All Files|*.*");
             
             if (!string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile))
             {
@@ -33,7 +34,7 @@ namespace VO_Tool.UI
             }
 
             // Add Audio file selector (without callback yet)
-            (ui.Lbl_AudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
+            (ui.LblAudioFile, ui.AudioSelector) = builder.AddFileSelectorWithLabel("Audio File:", "Audio Files|*.wav;*.mp3;*.flac;*.m4a|All Files|*.*");
             
             if (!string.IsNullOrEmpty(settings.LastAudioFile) && File.Exists(settings.LastAudioFile))
             {
@@ -41,7 +42,7 @@ namespace VO_Tool.UI
             }
             
             // Add Output folder selector (without callback yet)
-            (ui.Lbl_OutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
+            (ui.LblOutputFolder, ui.OutputFolderSelector) = builder.AddFolderSelectorWithLabel("Output Folder:");
             
             if (!string.IsNullOrEmpty(settings.LastOutputFolder) && Directory.Exists(settings.LastOutputFolder))
             {
@@ -51,7 +52,7 @@ namespace VO_Tool.UI
             // Add event handlers after restoration
             ui.ExcelSelector.OnFileSelected += file => 
             {
-                _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager);
+                _ = ui.ExcelService.LoadExcelColumnsAsync(file, ui.CmbVoTextColumn, ui.CmbVoAudioColumn, ui.StatusManager);
                 SaveSettings();
             };
             
@@ -60,12 +61,12 @@ namespace VO_Tool.UI
                 var validation = new FileSelectionHelper().ValidateAudioFile(file);
                 if (validation.IsValid)
                 {
-                    ui.StatusManager.UpdateStatus($"Audio file: {UIHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
+                    ui.StatusManager.UpdateStatus($"Audio file: {UiHelpers.GetFileName(file)} - {validation.GetStatusMessage()}");
                 }
                 else
                 {
                     ui.StatusManager.UpdateStatus($"Error: {validation.ErrorMessage}");
-                    UIHelpers.ShowError(validation.ErrorMessage);
+                    UiHelpers.ShowError(validation.ErrorMessage);
                 }
                 SaveSettings();
             };
@@ -79,36 +80,36 @@ namespace VO_Tool.UI
             bool hasExcelFile = !string.IsNullOrEmpty(settings.LastExcelFile) && File.Exists(settings.LastExcelFile);
 
             // Create VO Text Column dropdown
-            string defaultTextColumn = !string.IsNullOrEmpty(settings.LastVO_Text_Column) ? settings.LastVO_Text_Column : "A";
-            (ui.Lbl_VO_Text_Column, ui.Cmb_VO_Text_Column) = builder.CreateLabeledComboBox(
+            string defaultTextColumn = !string.IsNullOrEmpty(settings.LastVoTextColumn) ? settings.LastVoTextColumn : "A";
+            (ui.LblVoTextColumn, ui.CmbVoTextColumn) = builder.CreateLabeledComboBox(
                 "VO Text Column (A=1):", 
                 20, 
                 yPos, 
                 defaultSelectedValue: defaultTextColumn,
                 enabled: hasExcelFile,
                 onSelectedIndexChanged: (s, e) => SaveSettings());
-            form.Controls.Add(ui.Lbl_VO_Text_Column);
-            form.Controls.Add(ui.Cmb_VO_Text_Column);
+            form.Controls.Add(ui.LblVoTextColumn);
+            form.Controls.Add(ui.CmbVoTextColumn);
 
             yPos += 35;
 
             // Create VO Audio File Name Column dropdown
-            string defaultAudioColumn = !string.IsNullOrEmpty(settings.LastVO_Audio_Column) ? settings.LastVO_Audio_Column : "A";
-            (ui.Lbl_VO_Audio_Column, ui.Cmb_VO_Audio_Column) = builder.CreateLabeledComboBox(
+            string defaultAudioColumn = !string.IsNullOrEmpty(settings.LastVoAudioColumn) ? settings.LastVoAudioColumn : "A";
+            (ui.LblVoAudioColumn, ui.CmbVoAudioColumn) = builder.CreateLabeledComboBox(
                 "VO Audio File Name Column (A=1):", 
                 20, 
                 yPos, 
                 defaultSelectedValue: defaultAudioColumn,
                 enabled: hasExcelFile,
                 onSelectedIndexChanged: (s, e) => SaveSettings());
-            form.Controls.Add(ui.Lbl_VO_Audio_Column);
-            form.Controls.Add(ui.Cmb_VO_Audio_Column);
+            form.Controls.Add(ui.LblVoAudioColumn);
+            form.Controls.Add(ui.CmbVoAudioColumn);
 
             yPos += 35;
 
             // Add similarity threshold slider with save callback
             builder.UpdateCurrentY(yPos);
-            ui.Tb_SimilarityThreshold = builder.AddSimilaritySlider(
+            ui.TbSimilarityThreshold = builder.AddSimilaritySlider(
                 20, 10, 100, 75,
                 onScroll: (s, e) => SaveSettings());
             
@@ -118,13 +119,13 @@ namespace VO_Tool.UI
             builder.UpdateCurrentY(yPos);
 
             // Add model selector with saved model and save callback
-            (ui.Lbl_Model, ui.Cmb_Model) = builder.AddModelSelector(
+            (ui.LblModel, ui.CmbModel) = builder.AddModelSelector(
                 20, 
                 settings.LastModel,
                 onSelectedIndexChanged: (s, e) => SaveSettings());
             
             // Add language selector with saved language and save callback
-            (ui.Lbl_Language, ui.Cmb_Language) = builder.AddLanguageSelector(
+            (ui.LblLanguage, ui.CmbLanguage) = builder.AddLanguageSelector(
                 20, 
                 settings.LastLanguage,
                 onSelectedIndexChanged: (s, e) => SaveSettings());
@@ -187,28 +188,28 @@ namespace VO_Tool.UI
             // Load Excel columns if there's a saved Excel file
             if (hasExcelFile)
             {
-                _ = ui.ExcelService.LoadExcelColumnsAsync(settings.LastExcelFile, ui.Cmb_VO_Text_Column, ui.Cmb_VO_Audio_Column, ui.StatusManager, (textCol, audioCol) =>
+                _ = ui.ExcelService.LoadExcelColumnsAsync(settings.LastExcelFile, ui.CmbVoTextColumn, ui.CmbVoAudioColumn, ui.StatusManager, (textCol, audioCol) =>
                 {
                     // Restore saved selections after columns load
-                    if (!string.IsNullOrEmpty(settings.LastVO_Text_Column))
+                    if (!string.IsNullOrEmpty(settings.LastVoTextColumn))
                     {
-                        for (int i = 0; i < ui.Cmb_VO_Text_Column.Items.Count; i++)
+                        for (int i = 0; i < ui.CmbVoTextColumn.Items.Count; i++)
                         {
-                            if (ui.Cmb_VO_Text_Column.Items[i]?.ToString() == settings.LastVO_Text_Column)
+                            if (ui.CmbVoTextColumn.Items[i]?.ToString() == settings.LastVoTextColumn)
                             {
-                                ui.Cmb_VO_Text_Column.SelectedIndex = i;
+                                ui.CmbVoTextColumn.SelectedIndex = i;
                                 break;
                             }
                         }
                     }
                     
-                    if (!string.IsNullOrEmpty(settings.LastVO_Audio_Column))
+                    if (!string.IsNullOrEmpty(settings.LastVoAudioColumn))
                     {
-                        for (int i = 0; i < ui.Cmb_VO_Audio_Column.Items.Count; i++)
+                        for (int i = 0; i < ui.CmbVoAudioColumn.Items.Count; i++)
                         {
-                            if (ui.Cmb_VO_Audio_Column.Items[i]?.ToString() == settings.LastVO_Audio_Column)
+                            if (ui.CmbVoAudioColumn.Items[i]?.ToString() == settings.LastVoAudioColumn)
                             {
-                                ui.Cmb_VO_Audio_Column.SelectedIndex = i;
+                                ui.CmbVoAudioColumn.SelectedIndex = i;
                                 break;
                             }
                         }
@@ -223,7 +224,7 @@ namespace VO_Tool.UI
         private void SaveSettings()
         {
             if (isInitializing) return;
-            settings.UpdateFromUI(ui);
+            settings.UpdateFromUi(ui);
             Settings.Settings.Save();
         }
         

@@ -6,21 +6,21 @@ namespace VO_Tool.Services
 {
     public class ProcessService
     {
-        private readonly ExcelService _excelService;
-        private readonly StatusManager _statusManager;
-        private readonly FileSelector _audioSelector;
-        private readonly FileSelector _excelSelector;
-        private readonly FolderSelector _outputFolderSelector;
-        private readonly ComboBox _cmbVoTextColumn;
-        private readonly ComboBox _cmbVoAudioColumn;
-        private readonly TrackBar _tbSimilarityThreshold;
-        private readonly ComboBox _cmbModel;
-        private readonly ComboBox _cmbLanguage;
-        private readonly CheckBox _chkCreateLogFile;
-        private readonly CheckBox _chkCreateCsvFile;
-        private readonly CheckBox _chkSplitAudio;
-        private readonly NumericUpDown _nudStartPadding;
-        private readonly NumericUpDown _nudEndPadding;
+        private readonly ExcelService excelService;
+        private readonly StatusManager statusManager;
+        private readonly FileSelector audioSelector;
+        private readonly FileSelector excelSelector;
+        private readonly FolderSelector outputFolderSelector;
+        private readonly ComboBox cmbVoTextColumn;
+        private readonly ComboBox cmbVoAudioColumn;
+        private readonly TrackBar tbSimilarityThreshold;
+        private readonly ComboBox cmbModel;
+        private readonly ComboBox cmbLanguage;
+        private readonly CheckBox chkCreateLogFile;
+        private readonly CheckBox chkCreateCsvFile;
+        private readonly CheckBox chkSplitAudio;
+        private readonly NumericUpDown nudStartPadding;
+        private readonly NumericUpDown nudEndPadding;
         
         public ProcessService(
             ExcelService excelService,
@@ -39,21 +39,21 @@ namespace VO_Tool.Services
             NumericUpDown nudStartPadding,
             NumericUpDown nudEndPadding)
         {
-            _excelService = excelService;
-            _statusManager = statusManager;
-            _audioSelector = audioSelector;
-            _excelSelector = excelSelector;
-            _outputFolderSelector = outputFolderSelector;
-            _cmbVoTextColumn = cmbVoTextColumn;
-            _cmbVoAudioColumn = cmbVoAudioColumn;
-            _tbSimilarityThreshold = tbSimilarityThreshold;
-            _cmbModel = cmbModel;
-            _cmbLanguage = cmbLanguage;
-            _chkCreateLogFile = chkCreateLogFile;
-            _chkCreateCsvFile = chkCreateCsvFile;
-            _chkSplitAudio = chkSplitAudio;
-            _nudStartPadding = nudStartPadding;
-            _nudEndPadding = nudEndPadding;
+            this.excelService = excelService;
+            this.statusManager = statusManager;
+            this.audioSelector = audioSelector;
+            this.excelSelector = excelSelector;
+            this.outputFolderSelector = outputFolderSelector;
+            this.cmbVoTextColumn = cmbVoTextColumn;
+            this.cmbVoAudioColumn = cmbVoAudioColumn;
+            this.tbSimilarityThreshold = tbSimilarityThreshold;
+            this.cmbModel = cmbModel;
+            this.cmbLanguage = cmbLanguage;
+            this.chkCreateLogFile = chkCreateLogFile;
+            this.chkCreateCsvFile = chkCreateCsvFile;
+            this.chkSplitAudio = chkSplitAudio;
+            this.nudStartPadding = nudStartPadding;
+            this.nudEndPadding = nudEndPadding;
         }
         
         public async Task ProcessAsync()
@@ -61,51 +61,51 @@ namespace VO_Tool.Services
             var startTime = DateTime.Now;
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             
-            double similarityThreshold = WhisperService.GetSimilarityThreshold(_tbSimilarityThreshold);
-            _statusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
+            double similarityThreshold = WhisperService.GetSimilarityThreshold(tbSimilarityThreshold);
+            statusManager.UpdateStatus($"Similarity threshold: {similarityThreshold:P0}");
             await Task.Delay(500);
             
-            int textColumnNum = await _excelService.GetColumnNumberFromLetter(_cmbVoTextColumn.SelectedItem?.ToString() ?? "A");
-            int audioColumnNum = await _excelService.GetColumnNumberFromLetter(_cmbVoAudioColumn.SelectedItem?.ToString() ?? "A");
+            int textColumnNum = await excelService.GetColumnNumberFromLetter(cmbVoTextColumn.SelectedItem?.ToString() ?? "A");
+            int audioColumnNum = await excelService.GetColumnNumberFromLetter(cmbVoAudioColumn.SelectedItem?.ToString() ?? "A");
             
             // Read text from Excel
-            _statusManager.UpdateStatus($"Reading text from column {_cmbVoTextColumn.SelectedItem}...");
-            var texts = await _excelService.ReadColumnByNumberAsync(_excelSelector.FilePath, textColumnNum);
-            _statusManager.UpdateStatus($"Found {texts.Count} text entries");
+            statusManager.UpdateStatus($"Reading text from column {cmbVoTextColumn.SelectedItem}...");
+            var texts = await excelService.ReadColumnByNumberAsync(excelSelector.FilePath, textColumnNum);
+            statusManager.UpdateStatus($"Found {texts.Count} text entries");
 
             // Show each text entry with a small delay
-            _statusManager.UpdateStatus("=== TEXT ENTRIES ===", false);
+            statusManager.UpdateStatus("=== TEXT ENTRIES ===", false);
             for (int i = 0; i < texts.Count; i++)
             {
-                _statusManager.UpdateStatus($"[{i + 1}] {texts[i]}", false);
+                statusManager.UpdateStatus($"[{i + 1}] {texts[i]}", false);
                 await Task.Delay(25);
             }
 
             await Task.Delay(500);
             
             // Read audio file names from Excel
-            _statusManager.UpdateStatus($"Reading file names from column {_cmbVoAudioColumn.SelectedItem}...");
-            var audioFileNames = await _excelService.ReadColumnByNumberAsync(_excelSelector.FilePath, audioColumnNum);
-            _statusManager.UpdateStatus($"Found {audioFileNames.Count} file names");
+            statusManager.UpdateStatus($"Reading file names from column {cmbVoAudioColumn.SelectedItem}...");
+            var audioFileNames = await excelService.ReadColumnByNumberAsync(excelSelector.FilePath, audioColumnNum);
+            statusManager.UpdateStatus($"Found {audioFileNames.Count} file names");
             await Task.Delay(500);
             
             // Get selected model
-            var selectedModel = _cmbModel.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
-            var selectedLanguage = _cmbLanguage.SelectedItem is WhisperLanguage language ? language : WhisperLanguage.English;
+            var selectedModel = cmbModel.SelectedItem is WhisperModel model ? model : WhisperModel.Base;
+            var selectedLanguage = cmbLanguage.SelectedItem is WhisperLanguage language ? language : WhisperLanguage.English;
             var modelName = selectedModel.ToModelString();
             var languageName = selectedLanguage == WhisperLanguage.Auto ? "Auto" : selectedLanguage.ToString();
 
             // Transcribe audio
-            _statusManager.UpdateStatus("Starting Whisper transcription...");
-            var segments = await WhisperService.TranscribeAsync(_audioSelector.FilePath, selectedModel, selectedLanguage, texts, (msg) =>
+            statusManager.UpdateStatus("Starting Whisper transcription...");
+            var segments = await WhisperService.TranscribeAsync(audioSelector.FilePath, selectedModel, selectedLanguage, texts, (msg) =>
             {
-                _statusManager.UpdateStatus(msg);
+                statusManager.UpdateStatus(msg);
             });
-            _statusManager.UpdateStatus($"Transcription complete. Found {segments.Count} speech segments");
+            statusManager.UpdateStatus($"Transcription complete. Found {segments.Count} speech segments");
             await Task.Delay(500);
             
             // Matching text
-            _statusManager.UpdateStatus("Matching transcribed segments to Excel texts...");
+            statusManager.UpdateStatus("Matching transcribed segments to Excel texts...");
             var matches = TextMatchingService.MatchSegmentsToTexts(
                 segments, texts, audioFileNames, similarityThreshold);
 
@@ -113,17 +113,17 @@ namespace VO_Tool.Services
             int totalTexts = texts.Count;
             int totalSegments = segments.Count;
 
-            _statusManager.UpdateStatus($"Matched {matchedCount} of {totalTexts} texts (Segments: {totalSegments})");
+            statusManager.UpdateStatus($"Matched {matchedCount} of {totalTexts} texts (Segments: {totalSegments})");
             
             // Get padding values
-            double startPadding = (double)_nudStartPadding.Value;
-            double endPadding = (double)_nudEndPadding.Value;
+            double startPadding = (double)nudStartPadding.Value;
+            double endPadding = (double)nudEndPadding.Value;
             
             // Create CSV data with padding
             string csvData = CsvService.CreateMatchesCsvData(matches, startPadding, endPadding);
             
             // Show match summary
-            _statusManager.UpdateStatus("=== MATCH SUMMARY ===");
+            statusManager.UpdateStatus("=== MATCH SUMMARY ===");
 
             try
             {
@@ -132,35 +132,35 @@ namespace VO_Tool.Services
                     if (match.Segment != null)
                     {
                         string status = match.IsMatch ? "✓" : "✗";
-                        string start = UIHelpers.FormatTime(match.Segment.Start);
-                        string end = UIHelpers.FormatTime(match.Segment.End);
-                        _statusManager.UpdateStatus($"{status} [{start} - {end}] '{match.Segment.Text}' -> '{match.ExpectedText}' ({match.Similarity:P0})");
+                        string start = UiHelpers.FormatTime(match.Segment.Start);
+                        string end = UiHelpers.FormatTime(match.Segment.End);
+                        statusManager.UpdateStatus($"{status} [{start} - {end}] '{match.Segment.Text}' -> '{match.ExpectedText}' ({match.Similarity:P0})");
                     }
                     else
                     {
-                        _statusManager.UpdateStatus($"✗ MISSING: Text '{match.ExpectedText}' had no matching segment");
+                        statusManager.UpdateStatus($"✗ MISSING: Text '{match.ExpectedText}' had no matching segment");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _statusManager.UpdateStatus($"ERROR in match summary: {ex.Message}");
+                statusManager.UpdateStatus($"ERROR in match summary: {ex.Message}");
             }
             await Task.Delay(500);
             
             var endTime = DateTime.Now;
             var totalSeconds = (endTime - startTime).TotalSeconds;
-            _statusManager.UpdateStatus($"Total processing time: {totalSeconds:F1} seconds");
+            statusManager.UpdateStatus($"Total processing time: {totalSeconds:F1} seconds");
             
-            _statusManager.UpdateStatus("=== PROCESS COMPLETE ===");
+            statusManager.UpdateStatus("=== PROCESS COMPLETE ===");
             
             // Create folder if any output is enabled
-            bool shouldCreateFolder = _chkCreateLogFile.Checked || _chkCreateCsvFile.Checked || _chkSplitAudio.Checked;
+            bool shouldCreateFolder = chkCreateLogFile.Checked || chkCreateCsvFile.Checked || chkSplitAudio.Checked;
 
             if (shouldCreateFolder)
             {
                 var folderName = $"log_{timestamp}_{modelName}_{languageName}";
-                var outputFolder = Path.Combine(_outputFolderSelector.FolderPath, folderName);
+                var outputFolder = Path.Combine(outputFolderSelector.FolderPath, folderName);
                 Directory.CreateDirectory(outputFolder);
                 
                 string csvPath = null;
@@ -171,48 +171,48 @@ namespace VO_Tool.Services
                     csvPath = Path.Combine(outputFolder, $"matches_{timestamp}.csv");
                     File.WriteAllText(csvPath, csvData, System.Text.Encoding.UTF8);
                     
-                    if (_chkCreateCsvFile.Checked)
+                    if (chkCreateCsvFile.Checked)
                     {
-                        _statusManager.UpdateStatus($"Match report CSV saved to output folder");
+                        statusManager.UpdateStatus($"Match report CSV saved to output folder");
                     }
                     else
                     {
-                        _statusManager.UpdateStatus($"Temporary CSV created", false);
+                        statusManager.UpdateStatus($"Temporary CSV created", false);
                     }
                     await Task.Delay(500);
                 }
                 
                 // Split audio if checkbox is checked
-                if (_chkSplitAudio.Checked && !string.IsNullOrEmpty(csvData) && csvPath != null && File.Exists(csvPath))
+                if (chkSplitAudio.Checked && !string.IsNullOrEmpty(csvData) && csvPath != null && File.Exists(csvPath))
                 {
                     var splitter = new AudioSplitterService();
-                    await splitter.SplitAudioFromCsv(csvPath, _audioSelector.FilePath, outputFolder, _statusManager);
-                    _statusManager.UpdateStatus($"Audio split completed. Files saved to Media folder");
+                    await splitter.SplitAudioFromCsv(csvPath, audioSelector.FilePath, outputFolder, statusManager);
+                    statusManager.UpdateStatus($"Audio split completed. Files saved to Media folder");
                     await Task.Delay(500);
                 }
                 
                 // Delete temporary CSV if user didn't want it
-                if (!_chkCreateCsvFile.Checked && csvPath != null && File.Exists(csvPath))
+                if (!chkCreateCsvFile.Checked && csvPath != null && File.Exists(csvPath))
                 {
                     File.Delete(csvPath);
-                    _statusManager.UpdateStatus($"Temporary CSV deleted", false);
+                    statusManager.UpdateStatus($"Temporary CSV deleted", false);
                     await Task.Delay(500);
                 }
                 
                 // Save log file
-                if (_chkCreateLogFile.Checked)
+                if (chkCreateLogFile.Checked)
                 {
                     var logPath = Path.Combine(outputFolder, $"split_log_{timestamp}_{modelName}_{languageName}.txt");
-                    var logMessages = _statusManager.GetLogMessages();
+                    var logMessages = statusManager.GetLogMessages();
                     
                     using (var writer = new StreamWriter(logPath))
                     {
-                        writer.WriteLine("=== VO Audio Splitter Log ===");
+                        writer.WriteLine("=== Dialogue Splitter Log ===");
                         writer.WriteLine($"Date: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-                        writer.WriteLine($"Audio file: {_audioSelector.FilePath}");
-                        writer.WriteLine($"Excel file: {_excelSelector.FilePath}");
-                        writer.WriteLine($"Text column: {_cmbVoTextColumn.SelectedItem?.ToString() ?? string.Empty}");
-                        writer.WriteLine($"Audio file name column: {_cmbVoAudioColumn.SelectedItem?.ToString() ?? string.Empty}");
+                        writer.WriteLine($"Audio file: {audioSelector.FilePath}");
+                        writer.WriteLine($"Excel file: {excelSelector.FilePath}");
+                        writer.WriteLine($"Text column: {cmbVoTextColumn.SelectedItem?.ToString() ?? string.Empty}");
+                        writer.WriteLine($"Audio file name column: {cmbVoAudioColumn.SelectedItem?.ToString() ?? string.Empty}");
                         writer.WriteLine($"Whisper model: {modelName}");
                         writer.WriteLine($"Language: {languageName}");
                         writer.WriteLine();
@@ -227,17 +227,17 @@ namespace VO_Tool.Services
                         writer.WriteLine("=== End of Log ===");
                     }
                     
-                    _statusManager.UpdateStatus($"Log file saved to output folder");
+                    statusManager.UpdateStatus($"Log file saved to output folder");
                     await Task.Delay(500);
                 }
             }
             
-            UIHelpers.ShowSuccess(
+            UiHelpers.ShowSuccess(
                 $"Successfully processed:\n" +
                 $"- {texts.Count} text entries\n" +
                 $"- {segments.Count} speech segments detected\n" +
                 $"- {matchedCount} matches above threshold\n" +
-                $"- Output folder: {_outputFolderSelector.FolderPath}"
+                $"- Output folder: {outputFolderSelector.FolderPath}"
             );
         }
     }

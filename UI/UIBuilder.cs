@@ -3,15 +3,15 @@ using VO_Tool.Services;
 using VO_Tool.Status;
 using VO_Tool.UI;
 
-namespace VO_Tool
+namespace VO_tool.UI
 {
-    public class UIBuilder
+    public class UiBuilder
     {
-        private Form form;
+        private readonly Form form;
         private int currentY;
         private int maxWidth;
         
-        public UIBuilder(Form form, int startY = 30)
+        public UiBuilder(Form form, int startY = 30)
         {
             this.form = form;
             this.currentY = startY;
@@ -168,7 +168,7 @@ namespace VO_Tool
             };
             form.Controls.Add(label);
             
-            int currentValue = Settings.Settings.Get().LastSimilarityThreshold;
+            int currentValue = VO_Tool.Settings.Settings.Get().LastSimilarityThreshold;
             
             var trackBar = new TrackBar
             {
@@ -193,7 +193,7 @@ namespace VO_Tool
                 Text = $"{currentValue / 100.0:F2}",
                 Location = new Point(x + 350, currentY),
                 Size = new Size(50, 25),
-                TextAlign = System.Drawing.ContentAlignment.MiddleLeft
+                TextAlign = ContentAlignment.MiddleLeft
             };
             form.Controls.Add(valueLabel);
             
@@ -417,8 +417,8 @@ namespace VO_Tool
             Action<string>? onOtherFile = null)
         {
             control.AllowDrop = true;
-            control.DragEnter += (s, e) => UIControls.OnDragEnter(s, e);
-            control.DragDrop += (s, e) => UIControls.OnFileDrop(s, e, onExcelFile, onAudioFile, onOtherFile);
+            control.DragEnter += (s, e) => UiControls.OnDragEnter(s, e);
+            control.DragDrop += (s, e) => UiControls.OnFileDrop(s, e, onExcelFile, onAudioFile, onOtherFile);
         }
         
         public static void PopulateComboBox<T>(ComboBox comboBox, IEnumerable<T> items, bool selectFirst = true)

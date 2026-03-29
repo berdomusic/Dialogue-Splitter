@@ -9,37 +9,37 @@ namespace VO_Tool.Settings
         public string LastExcelFile { get; set; } = string.Empty;
         public string LastAudioFile { get; set; } = string.Empty;
         public string LastOutputFolder { get; set; } = string.Empty;
-        public string LastVO_Text_Column { get; set; } = string.Empty;
-        public string LastVO_Audio_Column { get; set; } = string.Empty;
+        public string LastVoTextColumn { get; set; } = string.Empty;
+        public string LastVoAudioColumn { get; set; } = string.Empty;
         public int LastSimilarityThreshold { get; set; } = 75;
         public WhisperModel LastModel { get; set; } = WhisperModel.Base;
         public WhisperLanguage LastLanguage { get; set; } = WhisperLanguage.English;
         public bool CreateLogFile { get; set; } = true;
         public bool CreateCsvFile { get; set; } = true;
-        public double StartPaddingSeconds { get; set; } = 0;
+        public double StartPaddingSeconds { get; set; }
         public double EndPaddingSeconds { get; set; } = .2;
-        public bool SplitAudio { get; set; } = false;
+        public bool SplitAudio { get; set; }
         
-        public void UpdateFromUI(UIControls ui)
+        public void UpdateFromUi(UiControls ui)
         {
             LastExcelFile = ui.ExcelSelector.FilePath;
             LastAudioFile = ui.AudioSelector.FilePath;
             LastOutputFolder = ui.OutputFolderSelector.FolderPath;
-            LastVO_Text_Column = ui.Cmb_VO_Text_Column.SelectedItem?.ToString() ?? string.Empty;
-            LastVO_Audio_Column = ui.Cmb_VO_Audio_Column.SelectedItem?.ToString() ?? string.Empty;
-            LastSimilarityThreshold = ui.Tb_SimilarityThreshold.Value;
+            LastVoTextColumn = ui.CmbVoTextColumn.SelectedItem?.ToString() ?? string.Empty;
+            LastVoAudioColumn = ui.CmbVoAudioColumn.SelectedItem?.ToString() ?? string.Empty;
+            LastSimilarityThreshold = ui.TbSimilarityThreshold.Value;
             CreateLogFile = ui.ChkCreateLogFile.Checked;
             CreateCsvFile = ui.ChkCreateCsvFile.Checked;
             SplitAudio = ui.ChkSplitAudio.Checked;
             StartPaddingSeconds = (double)ui.NudStartPadding.Value;
             EndPaddingSeconds = (double)ui.NudEndPadding.Value;
             
-            if (ui.Cmb_Model.SelectedItem is WhisperModel model)
+            if (ui.CmbModel.SelectedItem is WhisperModel model)
             {
                 LastModel = model;
             }
             
-            if (ui.Cmb_Language.SelectedItem is WhisperLanguage language)
+            if (ui.CmbLanguage.SelectedItem is WhisperLanguage language)
             {
                 LastLanguage = language;
             }
@@ -49,7 +49,7 @@ namespace VO_Tool.Settings
     public static class Settings
     {
         private static AppSettings? _settings;
-        private static readonly object _lock = new object();
+        private static readonly Lock Lock = new Lock();
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "VO_Tool", "settings.json"
@@ -59,7 +59,7 @@ namespace VO_Tool.Settings
         {
             if (_settings == null)
             {
-                lock (_lock)
+                lock (Lock)
                 {
                     if (_settings == null)
                     {

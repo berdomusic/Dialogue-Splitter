@@ -230,7 +230,6 @@ namespace VO_tool.UI
             int modelLabelX = 150;
             var label = new Label
             {
-                
                 Text = "Whisper Model:",
                 Location = new Point(x, currentY),
                 Size = new Size(modelLabelX, 25)
@@ -239,19 +238,43 @@ namespace VO_tool.UI
             var comboBox = new ComboBox
             {
                 Location = new Point(x + modelLabelX, currentY - 3),
-                Size = new Size(120, 23),
+                Size = new Size(140, 23),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
 
-            // Populate with installed models
+            // Define display order
+            var modelOrder = new[]
+            {
+                WhisperModel.Tiny,
+                WhisperModel.Base,
+                WhisperModel.Small,
+                WhisperModel.Medium,
+                WhisperModel.Large,
+                WhisperModel.Turbo,
+                WhisperModel.LargeV3Turbo,
+                WhisperModel.TinyEn,
+                WhisperModel.BaseEn,
+                WhisperModel.SmallEn,
+                WhisperModel.MediumEn,
+                WhisperModel.LargeV1,
+                WhisperModel.LargeV2,
+                WhisperModel.LargeV3
+            };
+
+            // Get installed models and order them
             var installedModels = WhisperModelExtensions.GetInstalledModels();
-            foreach (var model in installedModels)
+            var orderedModels = modelOrder.Where(m => installedModels.Contains(m)).ToList();
+            
+            // Add any remaining models not in the order list
+            orderedModels.AddRange(installedModels.Where(m => !modelOrder.Contains(m)).OrderBy(m => m.ToString()));
+
+            foreach (var model in orderedModels)
             {
                 comboBox.Items.Add(model);
             }
 
             // Select first by default
-            if (comboBox.Items.Count > 0)
+            if (comboBox.Items.Count > 0 && comboBox.SelectedIndex == -1)
             {
                 comboBox.SelectedIndex = 0;
             }

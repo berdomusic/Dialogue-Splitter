@@ -84,7 +84,7 @@ namespace VO_Tool.UI
             // Create VO Text Column dropdown
             string defaultTextColumn = !string.IsNullOrEmpty(settings.LastVoTextColumn) ? settings.LastVoTextColumn : "A";
             (ui.LblVoTextColumn, ui.CmbVoTextColumn) = builder.CreateLabeledComboBox(
-                "VO Text Column (A=1):", 
+                "VO Text Column:", 
                 20, 
                 yPos, 
                 defaultSelectedValue: defaultTextColumn,
@@ -98,7 +98,7 @@ namespace VO_Tool.UI
             // Create VO Audio File Name Column dropdown
             string defaultAudioColumn = !string.IsNullOrEmpty(settings.LastVoAudioColumn) ? settings.LastVoAudioColumn : "A";
             (ui.LblVoAudioColumn, ui.CmbVoAudioColumn) = builder.CreateLabeledComboBox(
-                "VO Audio File Name Column (A=1):", 
+                "VO Audio File Name Column:", 
                 20, 
                 yPos, 
                 defaultSelectedValue: defaultAudioColumn,

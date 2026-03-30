@@ -1,0 +1,47 @@
+﻿Source Audio File,Start,End,Audio File Name,Expected Text,Transcribed Text,Similarity
+"VO test -ENG.wav",00:00.100,00:01.599,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",00:02.500,00:04.040,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",00:04.779,00:06.440,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",00:07.180,00:08.559,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",00:09.480,00:11.479,"EN_005_reading_evening.mp3","She loves reading books in the evening.","She loves reading books in the evening.",1,0000
+"VO test -ENG.wav",00:12.420,00:14.120,"EN_014_movie_interesting.mp3","The movie was really interesting.","The movie was really interesting.",1,0000
+"VO test -ENG.wav",00:14.920,00:16.360,"EN_012_call_later.mp3","I'll call you later today.","I'll call you later today.",1,0000
+"VO test -ENG.wav",00:17.420,00:18.680,"EN_009_walk_together.mp3","Let's go for a walk together.","Let's go for a walk together.",1,0000
+"VO test -ENG.wav",00:19.660,00:21.360,"EN_001_greeting_morning.mp3","Good morning! How did you sleep?","Good morning. How did you sleep?",0,9781
+"VO test -ENG.wav",00:22.340,00:23.680,"EN_010_soup_delicious.mp3","This soup tastes delicious!","This soup tastes delicious.",0,9741
+"VO test -ENG.wav",00:24.500,00:25.939,"EN_011_pharmacy_location.mp3","Where is the nearest pharmacy?","Where is the nearest pharmacy?",1,0000
+"VO test -ENG.wav",00:26.840,00:28.460,"EN_003_shopping_groceries.mp3","I need to buy some groceries.","I need to buy some groceries.",1,0000
+"VO test -ENG.wav",00:29.320,00:31.300,"EN_007_train_arrival.mp3","The train arrives at 3 PM.","The train arrives at 3pm.",0,8731
+"VO test -ENG.wav",00:31.980,00:33.860,"EN_018_wait_station.mp3","Please wait for me at the station.","Please wait for me at the station.",1,0000
+"VO test -ENG.wav",00:34.600,00:36.240,"EN_019_favorite_color_blue.mp3","My favorite color is blue.","My favorite color is blue.",1,0000
+"VO test -ENG.wav",00:37.120,00:38.860,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",00:39.560,00:41.140,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",00:42.200,00:43.640,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000
+"VO test -ENG.wav",00:44.420,00:46.020,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",00:46.660,00:48.260,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",00:49.000,00:50.720,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",00:51.600,00:53.060,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",00:53.880,00:56.200,"EN_013_birthday_wishes.mp3","Happy birthday! Wishing you all the best.","Happy birthday. Wishing you all the best.",0,9829
+"VO test -ENG.wav",01:26.639,01:28.440,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",01:29.139,01:30.760,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",01:31.560,01:33.179,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000
+"VO test -ENG.wav",01:34.000,01:35.459,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",01:36.199,01:37.780,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",01:38.500,01:40.300,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",01:41.199,01:42.679,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",01:43.660,01:45.740,"EN_013_birthday_wishes.mp3","Happy birthday! Wishing you all the best.","Happy birthday, wishing you all the best.",0,9829
+"VO test -ENG.wav",01:46.560,01:48.360,"EN_005_reading_evening.mp3","She loves reading books in the evening.","She loves reading books in the evening.",1,0000
+"VO test -ENG.wav",01:49.260,01:50.920,"EN_014_movie_interesting.mp3","The movie was really interesting.","The movie was really interesting.",1,0000
+"VO test -ENG.wav",01:51.740,01:53.060,"EN_004_meeting_time.mp3","What time is the meeting?","What time is the meeting?",1,0000
+"VO test -ENG.wav",01:53.900,01:55.320,"EN_012_call_later.mp3","I'll call you later today.","I'll call you later today.",1,0000
+"VO test -ENG.wav",01:55.840,01:57.600,"EN_009_walk_together.mp3","Let's go for a walk together.","Let's go for a walk together.",1,0000
+"VO test -ENG.wav",01:58.380,02:00.320,"EN_001_greeting_morning.mp3","Good morning! How did you sleep?","Good morning. How did you sleep?",0,9781
+"VO test -ENG.wav",02:01.380,02:02.680,"EN_010_soup_delicious.mp3","This soup tastes delicious!","The soup tastes delicious.",0,8472
+"VO test -ENG.wav",02:03.500,02:04.880,"EN_011_pharmacy_location.mp3","Where is the nearest pharmacy?","Where is the nearest pharmacy?",1,0000
+"VO test -ENG.wav",02:05.880,02:07.360,"EN_003_shopping_groceries.mp3","I need to buy some groceries.","I need to buy some groceries.",1,0000
+"VO test -ENG.wav",02:08.340,02:10.160,"EN_007_train_arrival.mp3","The train arrives at 3 PM.","The train arrives at 3 p.m.",0,8884
+"VO test -ENG.wav",02:10.840,02:12.540,"EN_018_wait_station.mp3","Please wait for me at the station.","Please wait for me at the station.",1,0000
+"VO test -ENG.wav",02:13.340,02:14.839,"EN_019_favorite_color_blue.mp3","My favorite color is blue.","My favorite color is blue.",1,0000
+"VO test -ENG.wav",02:15.680,02:17.399,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",02:18.179,02:19.720,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",02:20.620,02:22.139,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000

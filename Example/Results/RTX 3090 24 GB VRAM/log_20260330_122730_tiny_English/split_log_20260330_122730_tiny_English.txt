@@ -1,0 +1,152 @@
+=== Dialogue Splitter Log ===
+Date: 2026-03-30 12:27:40
+Audio file: D:\dialogue_splitter\Dialogue-Splitter-main\Dialogue-Splitter-main\Example\VO test -ENG.wav
+Excel file: D:\dialogue_splitter\Dialogue-Splitter-main\Dialogue-Splitter-main\Example\VO_lines.xlsx
+Text column: A
+Audio file name column: B
+Whisper model: tiny
+Language: English
+
+=== All Status Messages ===
+12:27:30.259 - === PROCESS START ===
+12:27:30.262 - Similarity threshold: 75%
+12:27:30.772 - Reading text from column A...
+12:27:30.809 - Found 20 text entries
+12:27:31.938 - Reading file names from column B...
+12:27:31.946 - Found 20 file names
+12:27:32.454 - Starting Whisper transcription...
+12:27:36.494 - C:\Users\mcywinski\AppData\Local\Programs\Python\Python312\Lib\site-packages\whisper\timing.py:42: UserWarning: Failed to launch Triton kernels, likely due to missing CUDA toolkit; falling back to a slower median kernel implementation...
+12:27:36.495 -   warnings.warn(
+12:27:36.512 - C:\Users\mcywinski\AppData\Local\Programs\Python\Python312\Lib\site-packages\whisper\timing.py:146: UserWarning: Failed to launch Triton kernels, likely due to missing CUDA toolkit; falling back to a slower DTW implementation...
+12:27:36.512 -   warnings.warn(
+12:27:37.686 - C:\Users\mcywinski\AppData\Local\Programs\Python\Python312\Lib\site-packages\whisper\timing.py:42: UserWarning: Failed to launch Triton kernels, likely due to missing CUDA toolkit; falling back to a slower median kernel implementation...
+12:27:37.687 -   warnings.warn(
+12:27:37.687 - C:\Users\mcywinski\AppData\Local\Programs\Python\Python312\Lib\site-packages\whisper\timing.py:146: UserWarning: Failed to launch Triton kernels, likely due to missing CUDA toolkit; falling back to a slower DTW implementation...
+12:27:37.688 -   warnings.warn(
+12:27:39.053 - [00:00.000 - 00:01.680] I work as a software developer.
+12:27:39.053 - [00:02.880 - 00:04.140] Could I have a glass of water?
+12:27:39.054 - [00:05.200 - 00:07.160] What a lovely day it is.
+12:27:39.054 - [00:07.640 - 00:08.620] Thank you for your kindness.
+12:27:39.054 - [00:09.700 - 00:11.500] She loves reading books in the evening.
+12:27:39.054 - [00:12.860 - 00:14.180] The movie was really interesting.
+12:27:39.054 - [00:15.320 - 00:16.580] I'll call you later today.
+12:27:39.055 - [00:17.420 - 00:18.700] Let's go for a walk together.
+12:27:39.055 - [00:20.020 - 00:20.460] Good morning.
+12:27:39.055 - [00:20.620 - 00:21.300] How did you sleep?
+12:27:39.055 - [00:22.380 - 00:23.640] This soup tastes delicious.
+12:27:39.055 - [00:24.840 - 00:26.060] Where is the nearest pharmacy?
+12:27:39.056 - [00:27.180 - 00:28.440] I need to buy some groceries.
+12:27:39.056 - [00:29.300 - 00:31.880] The train arrives at 3 p.m.
+12:27:39.056 - [00:32.360 - 00:33.900] Please wait for me at the station.
+12:27:39.056 - [00:35.060 - 00:36.480] My favorite color is blue.
+12:27:39.057 - [00:37.520 - 00:38.980] Can you help me with this task?
+12:27:39.057 - [00:39.800 - 00:41.220] I'm learning Polish language.
+12:27:39.057 - [00:42.360 - 00:43.820] The weather is beautiful today.
+12:27:39.057 - [00:44.720 - 00:46.080] Could I have a glass of water?
+12:27:39.058 - [00:47.060 - 00:48.640] What a lovely day it is.
+12:27:39.058 - [00:49.260 - 00:50.720] I work as a software developer.
+12:27:39.058 - [00:52.060 - 00:53.060] Thank you for your kindness.
+12:27:39.058 - [00:54.260 - 00:56.200] Happy birthday wishing you all the best.
+12:27:39.059 - [00:57.140 - 00:59.260] She loves reading books in the evening.
+12:27:39.059 - [01:00.340 - 01:01.640] The movie was really interesting.
+12:27:39.059 - [01:02.740 - 01:03.640] What time is the meeting?
+12:27:39.060 - [01:04.760 - 01:06.160] I'll call you later today.
+12:27:39.060 - [01:06.960 - 01:08.220] Let's go for a walk together.
+12:27:39.061 - [01:09.300 - 01:10.880] Good morning. How did you sleep?
+12:27:39.061 - [01:11.900 - 01:13.100] This soup tastes delicious.
+12:27:39.061 - [01:14.600 - 01:15.820] Where is the nearest pharmacy?
+12:27:39.061 - [01:16.960 - 01:18.180] I need to buy some groceries.
+12:27:39.061 - [01:19.580 - 01:21.440] The train arrives at 3 p.m.
+12:27:39.062 - [01:22.140 - 01:23.560] Please wait for me at the station.
+12:27:39.062 - [01:24.260 - 01:26.120] My favorite color is blue.
+12:27:39.062 - [01:27.080 - 01:28.400] Can you help me with this task?
+12:27:39.062 - [01:29.440 - 01:30.760] I'm learning Polish language.
+12:27:39.063 - [01:31.780 - 01:33.360] The weather is beautiful today.
+12:27:39.063 - [01:34.240 - 01:35.480] Could I have a glass of water?
+12:27:39.063 - [01:36.540 - 01:38.080] What a lovely day it is.
+12:27:39.063 - [01:38.800 - 01:40.420] I work as a software developer.
+12:27:39.064 - [01:41.520 - 01:42.780] Thank you for your kindness.
+12:27:39.064 - [01:43.940 - 01:45.740] Happy birthday wishing you all the best.
+12:27:39.064 - [01:46.740 - 01:48.360] She loves reading books in the evening.
+12:27:39.064 - [01:49.440 - 01:50.920] The movie was really interesting.
+12:27:39.064 - [01:51.680 - 01:53.820] What time is the meeting?
+12:27:39.065 - [01:54.280 - 01:55.640] I'll call you later today.
+12:27:39.065 - [01:56.400 - 01:57.560] Let's go for a walk together.
+12:27:39.065 - [01:58.680 - 02:00.340] Good morning. How did you sleep?
+12:27:39.065 - [02:01.420 - 02:02.580] This soup tastes delicious.
+12:27:39.066 - [02:03.820 - 02:05.020] Where is the nearest pharmacy?
+12:27:39.066 - [02:06.140 - 02:07.320] I need to buy some groceries.
+12:27:39.066 - [02:08.620 - 02:10.660] The train arrives at 3 p.m.
+12:27:39.066 - [02:11.120 - 02:12.540] Please wait for me at the station.
+12:27:39.067 - [02:13.660 - 02:14.860] My favorite color is blue.
+12:27:39.067 - [02:15.900 - 02:17.400] Can you help me with this task?
+12:27:39.067 - [02:18.300 - 02:19.700] I'm learning Polish language.
+12:27:39.067 - [02:19.700 - 02:22.120] The weather is beautiful today.
+12:27:39.431 - Transcription complete. Found 59 speech segments
+12:27:39.941 - Matching transcribed segments to Excel texts...
+12:27:39.956 - Matched 58 of 20 texts (Segments: 59)
+12:27:39.957 - === MATCH SUMMARY ===
+12:27:39.957 - ✓ [00:00.000 - 00:01.680] 'I work as a software developer.' -> 'I work as a software developer.' (100%)
+12:27:39.957 - ✓ [00:02.880 - 00:04.140] 'Could I have a glass of water?' -> 'Could I have a glass of water?' (100%)
+12:27:39.957 - ✓ [00:05.200 - 00:07.160] 'What a lovely day it is.' -> 'What a lovely day it is!' (97%)
+12:27:39.957 - ✓ [00:07.640 - 00:08.619] 'Thank you for your kindness.' -> 'Thank you for your kindness.' (100%)
+12:27:39.957 - ✓ [00:09.700 - 00:11.500] 'She loves reading books in the evening.' -> 'She loves reading books in the evening.' (100%)
+12:27:39.957 - ✓ [00:12.860 - 00:14.180] 'The movie was really interesting.' -> 'The movie was really interesting.' (100%)
+12:27:39.957 - ✓ [00:15.320 - 00:16.579] 'I'll call you later today.' -> 'I'll call you later today.' (100%)
+12:27:39.957 - ✓ [00:17.420 - 00:18.700] 'Let's go for a walk together.' -> 'Let's go for a walk together.' (100%)
+12:27:39.957 - ✗ [00:20.020 - 00:20.460] 'Good morning.' -> 'UNMATCHED_SEGMENT' (36%)
+12:27:39.957 - ✓ [00:20.620 - 00:21.300] 'How did you sleep?' -> 'Good morning! How did you sleep?' (95%)
+12:27:39.957 - ✓ [00:22.380 - 00:23.640] 'This soup tastes delicious.' -> 'This soup tastes delicious!' (97%)
+12:27:39.957 - ✓ [00:24.840 - 00:26.060] 'Where is the nearest pharmacy?' -> 'Where is the nearest pharmacy?' (100%)
+12:27:39.957 - ✓ [00:27.180 - 00:28.440] 'I need to buy some groceries.' -> 'I need to buy some groceries.' (100%)
+12:27:39.957 - ✓ [00:29.300 - 00:31.880] 'The train arrives at 3 p.m.' -> 'The train arrives at 3 PM.' (89%)
+12:27:39.957 - ✓ [00:32.360 - 00:33.900] 'Please wait for me at the station.' -> 'Please wait for me at the station.' (100%)
+12:27:39.957 - ✓ [00:35.060 - 00:36.479] 'My favorite color is blue.' -> 'My favorite color is blue.' (100%)
+12:27:39.957 - ✓ [00:37.520 - 00:38.979] 'Can you help me with this task?' -> 'Can you help me with this task?' (100%)
+12:27:39.957 - ✓ [00:39.800 - 00:41.220] 'I'm learning Polish language.' -> 'I'm learning Polish language.' (100%)
+12:27:39.957 - ✓ [00:42.360 - 00:43.820] 'The weather is beautiful today.' -> 'The weather is beautiful today.' (100%)
+12:27:39.957 - ✓ [00:44.720 - 00:46.080] 'Could I have a glass of water?' -> 'Could I have a glass of water?' (100%)
+12:27:39.957 - ✓ [00:47.060 - 00:48.640] 'What a lovely day it is.' -> 'What a lovely day it is!' (97%)
+12:27:39.957 - ✓ [00:49.260 - 00:50.720] 'I work as a software developer.' -> 'I work as a software developer.' (100%)
+12:27:39.957 - ✓ [00:52.060 - 00:53.060] 'Thank you for your kindness.' -> 'Thank you for your kindness.' (100%)
+12:27:39.957 - ✓ [00:54.260 - 00:56.200] 'Happy birthday wishing you all the best.' -> 'Happy birthday! Wishing you all the best.' (98%)
+12:27:39.957 - ✓ [00:57.140 - 00:59.260] 'She loves reading books in the evening.' -> 'She loves reading books in the evening.' (100%)
+12:27:39.957 - ✓ [01:00.340 - 01:01.640] 'The movie was really interesting.' -> 'The movie was really interesting.' (100%)
+12:27:39.957 - ✓ [01:02.740 - 01:03.640] 'What time is the meeting?' -> 'What time is the meeting?' (100%)
+12:27:39.957 - ✓ [01:04.760 - 01:06.160] 'I'll call you later today.' -> 'I'll call you later today.' (100%)
+12:27:39.957 - ✓ [01:06.959 - 01:08.220] 'Let's go for a walk together.' -> 'Let's go for a walk together.' (100%)
+12:27:39.957 - ✓ [01:09.300 - 01:10.880] 'Good morning. How did you sleep?' -> 'Good morning! How did you sleep?' (98%)
+12:27:39.957 - ✓ [01:11.900 - 01:13.100] 'This soup tastes delicious.' -> 'This soup tastes delicious!' (97%)
+12:27:39.957 - ✓ [01:14.600 - 01:15.819] 'Where is the nearest pharmacy?' -> 'Where is the nearest pharmacy?' (100%)
+12:27:39.957 - ✓ [01:16.960 - 01:18.180] 'I need to buy some groceries.' -> 'I need to buy some groceries.' (100%)
+12:27:39.957 - ✓ [01:19.580 - 01:21.440] 'The train arrives at 3 p.m.' -> 'The train arrives at 3 PM.' (89%)
+12:27:39.957 - ✓ [01:22.140 - 01:23.560] 'Please wait for me at the station.' -> 'Please wait for me at the station.' (100%)
+12:27:39.957 - ✓ [01:24.260 - 01:26.120] 'My favorite color is blue.' -> 'My favorite color is blue.' (100%)
+12:27:39.957 - ✓ [01:27.080 - 01:28.400] 'Can you help me with this task?' -> 'Can you help me with this task?' (100%)
+12:27:39.957 - ✓ [01:29.440 - 01:30.760] 'I'm learning Polish language.' -> 'I'm learning Polish language.' (100%)
+12:27:39.957 - ✓ [01:31.780 - 01:33.360] 'The weather is beautiful today.' -> 'The weather is beautiful today.' (100%)
+12:27:39.957 - ✓ [01:34.240 - 01:35.479] 'Could I have a glass of water?' -> 'Could I have a glass of water?' (100%)
+12:27:39.957 - ✓ [01:36.539 - 01:38.080] 'What a lovely day it is.' -> 'What a lovely day it is!' (97%)
+12:27:39.957 - ✓ [01:38.800 - 01:40.420] 'I work as a software developer.' -> 'I work as a software developer.' (100%)
+12:27:39.957 - ✓ [01:41.520 - 01:42.780] 'Thank you for your kindness.' -> 'Thank you for your kindness.' (100%)
+12:27:39.957 - ✓ [01:43.940 - 01:45.740] 'Happy birthday wishing you all the best.' -> 'Happy birthday! Wishing you all the best.' (98%)
+12:27:39.957 - ✓ [01:46.740 - 01:48.360] 'She loves reading books in the evening.' -> 'She loves reading books in the evening.' (100%)
+12:27:39.957 - ✓ [01:49.440 - 01:50.920] 'The movie was really interesting.' -> 'The movie was really interesting.' (100%)
+12:27:39.957 - ✓ [01:51.680 - 01:53.820] 'What time is the meeting?' -> 'What time is the meeting?' (100%)
+12:27:39.957 - ✓ [01:54.280 - 01:55.640] 'I'll call you later today.' -> 'I'll call you later today.' (100%)
+12:27:39.957 - ✓ [01:56.400 - 01:57.560] 'Let's go for a walk together.' -> 'Let's go for a walk together.' (100%)
+12:27:39.957 - ✓ [01:58.680 - 02:00.340] 'Good morning. How did you sleep?' -> 'Good morning! How did you sleep?' (98%)
+12:27:39.957 - ✓ [02:01.420 - 02:02.580] 'This soup tastes delicious.' -> 'This soup tastes delicious!' (97%)
+12:27:39.957 - ✓ [02:03.820 - 02:05.020] 'Where is the nearest pharmacy?' -> 'Where is the nearest pharmacy?' (100%)
+12:27:39.957 - ✓ [02:06.140 - 02:07.320] 'I need to buy some groceries.' -> 'I need to buy some groceries.' (100%)
+12:27:39.957 - ✓ [02:08.620 - 02:10.660] 'The train arrives at 3 p.m.' -> 'The train arrives at 3 PM.' (89%)
+12:27:39.957 - ✓ [02:11.120 - 02:12.540] 'Please wait for me at the station.' -> 'Please wait for me at the station.' (100%)
+12:27:39.957 - ✓ [02:13.660 - 02:14.860] 'My favorite color is blue.' -> 'My favorite color is blue.' (100%)
+12:27:39.957 - ✓ [02:15.900 - 02:17.400] 'Can you help me with this task?' -> 'Can you help me with this task?' (100%)
+12:27:39.957 - ✓ [02:18.300 - 02:19.700] 'I'm learning Polish language.' -> 'I'm learning Polish language.' (100%)
+12:27:39.957 - ✓ [02:19.700 - 02:22.120] 'The weather is beautiful today.' -> 'The weather is beautiful today.' (100%)
+12:27:40.460 - Total processing time: 10,2 seconds
+12:27:40.460 - === PROCESS COMPLETE ===
+12:27:40.460 - Match report CSV saved to output folder
+
+=== End of Log ===

@@ -1,0 +1,59 @@
+﻿Source Audio File,Start,End,Audio File Name,Expected Text,Transcribed Text,Similarity
+"VO test -ENG.wav",00:00.100,00:01.880,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",00:02.980,00:04.340,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",00:05.300,00:07.360,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",00:07.740,00:08.819,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",00:09.799,00:11.700,"EN_005_reading_evening.mp3","She loves reading books in the evening.","She loves reading books in the evening.",1,0000
+"VO test -ENG.wav",00:12.959,00:14.380,"EN_014_movie_interesting.mp3","The movie was really interesting.","The movie was really interesting.",1,0000
+"VO test -ENG.wav",00:15.420,00:16.779,"EN_012_call_later.mp3","I'll call you later today.","I'll call you later today.",1,0000
+"VO test -ENG.wav",00:17.520,00:18.900,"EN_009_walk_together.mp3","Let's go for a walk together.","Let's go for a walk together.",1,0000
+"VO test -ENG.wav",00:20.720,00:21.500,"EN_001_greeting_morning.mp3","Good morning! How did you sleep?","How did you sleep?",0,9500
+"VO test -ENG.wav",00:22.480,00:23.840,"EN_010_soup_delicious.mp3","This soup tastes delicious!","This soup tastes delicious.",0,9741
+"VO test -ENG.wav",00:24.940,00:26.259,"EN_011_pharmacy_location.mp3","Where is the nearest pharmacy?","Where is the nearest pharmacy?",1,0000
+"VO test -ENG.wav",00:27.280,00:28.640,"EN_003_shopping_groceries.mp3","I need to buy some groceries.","I need to buy some groceries.",1,0000
+"VO test -ENG.wav",00:29.400,00:32.080,"EN_007_train_arrival.mp3","The train arrives at 3 PM.","The train arrives at 3 p.m.",0,8884
+"VO test -ENG.wav",00:32.460,00:34.100,"EN_018_wait_station.mp3","Please wait for me at the station.","Please wait for me at the station.",1,0000
+"VO test -ENG.wav",00:35.160,00:36.680,"EN_019_favorite_color_blue.mp3","My favorite color is blue.","My favorite color is blue.",1,0000
+"VO test -ENG.wav",00:37.620,00:39.180,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",00:39.900,00:41.420,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",00:42.460,00:44.020,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000
+"VO test -ENG.wav",00:44.820,00:46.280,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",00:47.160,00:48.840,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",00:49.360,00:50.920,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",00:52.160,00:53.260,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",00:54.360,00:56.400,"EN_013_birthday_wishes.mp3","Happy birthday! Wishing you all the best.","Happy birthday wishing you all the best.",0,9829
+"VO test -ENG.wav",00:57.240,00:59.460,"EN_005_reading_evening.mp3","She loves reading books in the evening.","She loves reading books in the evening.",1,0000
+"VO test -ENG.wav",01:00.440,01:01.840,"EN_014_movie_interesting.mp3","The movie was really interesting.","The movie was really interesting.",1,0000
+"VO test -ENG.wav",01:02.840,01:03.840,"EN_004_meeting_time.mp3","What time is the meeting?","What time is the meeting?",1,0000
+"VO test -ENG.wav",01:04.860,01:06.360,"EN_012_call_later.mp3","I'll call you later today.","I'll call you later today.",1,0000
+"VO test -ENG.wav",01:07.059,01:08.420,"EN_009_walk_together.mp3","Let's go for a walk together.","Let's go for a walk together.",1,0000
+"VO test -ENG.wav",01:09.399,01:11.080,"EN_001_greeting_morning.mp3","Good morning! How did you sleep?","Good morning. How did you sleep?",0,9781
+"VO test -ENG.wav",01:12.000,01:13.300,"EN_010_soup_delicious.mp3","This soup tastes delicious!","This soup tastes delicious.",0,9741
+"VO test -ENG.wav",01:14.699,01:16.020,"EN_011_pharmacy_location.mp3","Where is the nearest pharmacy?","Where is the nearest pharmacy?",1,0000
+"VO test -ENG.wav",01:17.060,01:18.380,"EN_003_shopping_groceries.mp3","I need to buy some groceries.","I need to buy some groceries.",1,0000
+"VO test -ENG.wav",01:19.679,01:21.640,"EN_007_train_arrival.mp3","The train arrives at 3 PM.","The train arrives at 3 p.m.",0,8884
+"VO test -ENG.wav",01:22.240,01:23.760,"EN_018_wait_station.mp3","Please wait for me at the station.","Please wait for me at the station.",1,0000
+"VO test -ENG.wav",01:24.360,01:26.320,"EN_019_favorite_color_blue.mp3","My favorite color is blue.","My favorite color is blue.",1,0000
+"VO test -ENG.wav",01:27.179,01:28.600,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",01:29.539,01:30.960,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",01:31.880,01:33.560,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000
+"VO test -ENG.wav",01:34.340,01:35.679,"EN_015_water_request.mp3","Could I have a glass of water?","Could I have a glass of water?",1,0000
+"VO test -ENG.wav",01:36.639,01:38.280,"EN_017_lovely_day.mp3","What a lovely day it is!","What a lovely day it is.",0,9708
+"VO test -ENG.wav",01:38.899,01:40.620,"EN_016_software_developer.mp3","I work as a software developer.","I work as a software developer.",1,0000
+"VO test -ENG.wav",01:41.620,01:42.980,"EN_020_thank_kindness.mp3","Thank you for your kindness.","Thank you for your kindness.",1,0000
+"VO test -ENG.wav",01:44.039,01:45.940,"EN_013_birthday_wishes.mp3","Happy birthday! Wishing you all the best.","Happy birthday wishing you all the best.",0,9829
+"VO test -ENG.wav",01:46.840,01:48.560,"EN_005_reading_evening.mp3","She loves reading books in the evening.","She loves reading books in the evening.",1,0000
+"VO test -ENG.wav",01:49.540,01:51.120,"EN_014_movie_interesting.mp3","The movie was really interesting.","The movie was really interesting.",1,0000
+"VO test -ENG.wav",01:51.780,01:54.020,"EN_004_meeting_time.mp3","What time is the meeting?","What time is the meeting?",1,0000
+"VO test -ENG.wav",01:54.380,01:55.840,"EN_012_call_later.mp3","I'll call you later today.","I'll call you later today.",1,0000
+"VO test -ENG.wav",01:56.500,01:57.760,"EN_009_walk_together.mp3","Let's go for a walk together.","Let's go for a walk together.",1,0000
+"VO test -ENG.wav",01:58.780,02:00.540,"EN_001_greeting_morning.mp3","Good morning! How did you sleep?","Good morning. How did you sleep?",0,9781
+"VO test -ENG.wav",02:01.520,02:02.780,"EN_010_soup_delicious.mp3","This soup tastes delicious!","This soup tastes delicious.",0,9741
+"VO test -ENG.wav",02:03.919,02:05.220,"EN_011_pharmacy_location.mp3","Where is the nearest pharmacy?","Where is the nearest pharmacy?",1,0000
+"VO test -ENG.wav",02:06.240,02:07.520,"EN_003_shopping_groceries.mp3","I need to buy some groceries.","I need to buy some groceries.",1,0000
+"VO test -ENG.wav",02:08.720,02:10.859,"EN_007_train_arrival.mp3","The train arrives at 3 PM.","The train arrives at 3 p.m.",0,8884
+"VO test -ENG.wav",02:11.220,02:12.739,"EN_018_wait_station.mp3","Please wait for me at the station.","Please wait for me at the station.",1,0000
+"VO test -ENG.wav",02:13.760,02:15.060,"EN_019_favorite_color_blue.mp3","My favorite color is blue.","My favorite color is blue.",1,0000
+"VO test -ENG.wav",02:16.000,02:17.600,"EN_006_help_task.mp3","Can you help me with this task?","Can you help me with this task?",1,0000
+"VO test -ENG.wav",02:18.400,02:19.899,"EN_008_learning_polish.mp3","I'm learning Polish language.","I'm learning Polish language.",1,0000
+"VO test -ENG.wav",02:19.799,02:22.320,"EN_002_weather_sunny.mp3","The weather is beautiful today.","The weather is beautiful today.",1,0000

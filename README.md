@@ -38,16 +38,23 @@ Email: kontakt@berdo-music.pl
    - Whisper installs CPU version automatically
    - See optional GPU installation below for better performance
 
+4. **Install FFmpeg**
+   
+   https://www.ffmpeg.org/
+
+
 ### Optional Dependencies
 
-4. **Install Additional Whisper Models**
+5. **Install Additional Whisper Models**
    
    Whisper comes with 'base' model by default. To download additional models:
    ```cmd
    py -c "import whisper; whisper.load_model('model_name')"
    ```
    
-   Replace model_name with:
+   Replace 'model_name' with one of the available models:
+
+   'tiny.en', 'tiny', 'base.en', 'base', 'small.en', 'small', 'medium.en', 'medium', 'large-v1', 'large-v2', 'large-v3', 'large', 'large-v3-turbo', 'turbo'
 
 
 | Model | Parameters | Disk Size | Speed | Best For |
@@ -65,25 +72,18 @@ dir %USERPROFILE%\.cache\whisper
 ```
 
 
-5. **Install PyTorch with GPU Support**
+6. **Install PyTorch with GPU Support**
    
    First check which CUDA version works with your GPU:
+   ```cmd
    nvidia-smi
-   
+   ```
+
    Example for CUDA 12.1:
 
    ```cmd
    py -m pip install torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cu121
    ```
-
-6. **Install FFmpeg (Required for non-WAV formats)**
-   
-   The tool supports MP3, FLAC, M4A, OGG, AAC, OPUS, and WEBM formats, but requires FFmpeg:
-   
-   - Windows (using Chocolatey): choco install ffmpeg
-   - Windows (using Scoop): scoop install ffmpeg
-   - Mac: brew install ffmpeg
-   - Ubuntu/Debian: sudo apt install ffmpeg
 
 ---
 
@@ -238,10 +238,26 @@ Settings persist between application restarts.
 
 ## Performance Benchmarks
 
-### English Language
-Test environment: NVIDIA GeForce RTX 3050 (4GB VRAM)
-Audio duration: ~2 minutes 20 seconds
+English language, audio duration: ~2 minutes 20 seconds
+
 All models using FP16 with GPU acceleration
+
+
+### NVIDIA GeForce RTX 3090 (24GB VRAM)
+
+
+| Metric | Tiny | Base | Small | Medium | Large |
+|--------|------|------|-------|--------|-------|
+| Transcription Time | ~7.2 sec | ~11.8 sec | ~16.2 sec | ~32.5 sec | ~86.4 sec |
+| Total Processing Time | 10.2 sec | 14.4 sec | 19.8 sec | 35.9 sec | 88.5 sec |
+| Real-time Factor | 13.7x | 11.7x | 8.5x | 4.7x | 1.6x |
+| Segments Found | 59 | 59 | 58 | 58 | 88 |
+| Matched Segments | 58/20 | 58/20 | 46/20 | 58/20 | 62/20 |
+| VRAM Usage | ~0.8 GB | ~1.2 GB | ~1.8 GB | ~3.5 GB | ~6-7 GB |
+| Accuracy | ~95% | ~98% | ~94% | ~98% | ~98% |
+
+
+### NVIDIA GeForce RTX 3050 (4GB VRAM)
 
 | Metric | Tiny | Base | Small | Medium | Large |
 |--------|------|------|-------|--------|-------|
@@ -253,15 +269,13 @@ All models using FP16 with GPU acceleration
 | Matched Segments | 58/20 | 58/20 | 51/20 | 58/20 | 61/20 |
 | Accuracy | ~95% | ~98% | ~94% | ~98% | ~98% |
 
-### Accuracy Observations
+### Comparison: RTX 3050 (4GB) vs RTX 3090 (24GB)
 
-| Model | Strengths | Weaknesses |
-|-------|-----------|------------|
-| Tiny | Fastest (20.6s total), 61 segments detected | Splits combined phrases (e.g., "Good morning" + "How did you sleep?"), lower accuracy on some phrases |
-| Base | Good balance (34.6s), all 20 texts matched, clean punctuation | Slight formatting variations (e.g., "3pm" vs "3 PM") |
-| Small | Decent speed (41.1s) | More unmatched segments (51/20), some phrase splitting |
-| Medium | High accuracy, proper punctuation, handles contractions well | 3x slower than base (91.9s) |
-| Large | Maximum accuracy, best punctuation | Extremely slow (686s / 11.4 minutes), detects extra segments (hallucinations), not practical for real-time use |
+| Metric | Tiny | Base | Small | Medium | Large |
+|--------|------|------|-------|--------|-------|
+| RTX 3050 Total Time | 20.6 sec | 34.6 sec | 41.1 sec | 91.9 sec | 686.3 sec |
+| RTX 3090 Total Time | 10.2 sec | 14.4 sec | 19.8 sec | 35.9 sec | 88.5 sec |
+| Relative Speed RTX 3090 vs RTX 3050 | 2.0x faster | 2.4x faster | 2.1x faster | 2.6x faster | 7.8x faster |
 
 ---
 

@@ -253,7 +253,6 @@ All models using FP16 with GPU acceleration
 | Real-time Factor | 13.7x | 11.7x | 8.5x | 4.7x | 1.6x |
 | Segments Found | 59 | 59 | 58 | 58 | 88 |
 | Matched Segments | 58/20 | 58/20 | 46/20 | 58/20 | 62/20 |
-| VRAM Usage | ~0.8 GB | ~1.2 GB | ~1.8 GB | ~3.5 GB | ~6-7 GB |
 | Accuracy | ~95% | ~98% | ~94% | ~98% | ~98% |
 
 
@@ -264,7 +263,6 @@ All models using FP16 with GPU acceleration
 | Transcription Time | ~16.5 sec | ~27.5 sec | ~37.5 sec | ~83.8 sec | ~671.3 sec |
 | Total Processing Time | 20.6 sec | 34.6 sec | 41.1 sec | 91.9 sec | 686.3 sec |
 | Real-time Factor | 8.1x | 4.8x | 4.1x | 1.6x | 0.2x |
-| Relative Speed | 40% faster | Baseline | 16% slower | 2.7x slower | 20x slower |
 | Segments Found | 61 | 59 | 54 | 58 | 76 |
 | Matched Segments | 58/20 | 58/20 | 51/20 | 58/20 | 61/20 |
 | Accuracy | ~95% | ~98% | ~94% | ~98% | ~98% |
